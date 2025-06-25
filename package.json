@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build",
     "preview": "vite preview"
   },
