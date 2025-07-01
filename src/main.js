@@ -24,5 +24,5 @@ document.querySelector('#app').innerHTML = `
 
   </div>
 `;
-
+console.log('www');
 setupCounter(document.querySelector('#counter'));
