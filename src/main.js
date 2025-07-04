@@ -1,28 +1,65 @@
-/* eslint-disable import/extensions */
-/* eslint-disable import/no-unresolved */
 import "./style.css";
-import javascriptLogo from "./javascript.svg";
 import viteLogo from "../public/vite.svg";
-import setupCounter from "./counter.js";
 
 document.querySelector("#app").innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title"></h5>
+      <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more!
-    </p>
-    <div class= "container"> TEST</div>
-
+    <div class="modal-body text-break"></div>
+    <div class="modal-footer">
+      <a class="btn btn-primary full-article" href="#" role="button" target="_blank" rel="noopener noreferrer">
+        Читать полностью
+      </a>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+    </div>
   </div>
+</div>
+</div>
+<main class="flex-grow-1">
+    <section class="container-fluid bg-dark p-5">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 mx-auto text-white">
+          <h1 class="display-3 mb-0">RSS агрегатор</h1>
+          <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
+          <form action="" class="rss-form text-body">
+            <div class="row">
+              <div class="col">
+                <div class="form-floating">
+                  <input id="url-input" autofocus="" type="text" required="" name="url" aria-label="url" class="form-control w-100" placeholder="ссылка RSS" autocomplete="off">
+                  <label for="url-input">Ссылка RSS</label>
+                </div>
+              </div>
+              <div class="col-auto">
+                <button type="submit" aria-label="add" class="h-100 btn btn-lg btn-primary px-sm-5">Добавить</button>
+              </div>
+            </div>
+          </form>
+          <p class="mt-2 mb-0 text-muted">Пример: https://lorem-rss.hexlet.app/feed</p>
+          <p class="feedback m-0 position-absolute small text-danger"></p>
+        </div>
+      </div>
+    </section>
+    <section class="container-fluid container-xxl p-5">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 order-1 mx-auto posts">
+
+        </div>
+        <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds">
+
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer border-top py-3 mt-5 bg-light">
+    <div class="container-xl">
+      <div class="text-center">
+        created by
+        <a href="https://ru.hexlet.io/professions/frontend/projects/11" target="_blank">Hexlet</a>
+      </div>
+    </div>
+  </footer>
 `;
-console.log("www");
-setupCounter(document.querySelector("#counter"));
