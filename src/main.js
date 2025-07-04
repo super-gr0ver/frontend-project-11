@@ -1,6 +1,4 @@
-import "./style.css";
-import viteLogo from "../public/vite.svg";
+import './style.css';
+import view from './view.js';
 
-document.querySelector("body").innerHTML = `
-
-`;
+view('test');
