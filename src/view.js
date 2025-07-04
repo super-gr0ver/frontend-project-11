@@ -1,6 +1,6 @@
 import onChange from 'on-change';
 
 function view(element) {
-  console.log(element);
+  return console.log(element);
 }
 export default view;
