@@ -1,9 +1,9 @@
-import { resolve } from 'path';
+import { resolve } from "path";
 
 export default {
-  root: resolve(__dirname, './'),
+  root: resolve(__dirname, "./"),
   build: {
-    outDir: '../dist',
+    outDir: "dist",
   },
   server: {
     port: 8080,
