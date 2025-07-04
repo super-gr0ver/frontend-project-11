@@ -1,11 +1,11 @@
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-import './style.css';
-import javascriptLogo from './javascript.svg';
-import viteLogo from '../../../../../../vite.svg';
-import setupCounter from './counter.js';
+import "./style.css";
+import javascriptLogo from "./javascript.svg";
+// import viteLogo from '../../../../../../vite.svg';
+import setupCounter from "./counter.js";
 
-document.querySelector('#app').innerHTML = `
+document.querySelector("#app").innerHTML = `
   <div>
     <a href="https://vite.dev" target="_blank">
       <img src="${viteLogo}" class="logo" alt="Vite logo" />
@@ -24,5 +24,5 @@ document.querySelector('#app').innerHTML = `
 
   </div>
 `;
-console.log('www');
-setupCounter(document.querySelector('#counter'));
+console.log("www");
+setupCounter(document.querySelector("#counter"));
