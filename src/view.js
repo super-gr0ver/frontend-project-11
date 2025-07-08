@@ -6,8 +6,9 @@ const view = (state) => {
   input.classList.remove('is-invalid');
 
   if (state.errors) {
+    console.log(state.errors);
     input.classList.add('is-invalid');
-    feedback.textContent = 'Ссылка должна быть валидным URL';
+    feedback.textContent = state.errors;
   }
 };
 export default view;
