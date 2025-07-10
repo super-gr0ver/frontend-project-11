@@ -28,11 +28,10 @@ const run = async () => {
 };
 run();
 
-// const schema = yup.string().url('Ссылка должна быть валидным URL');
 const schema = yup.object().shape({
   url: yup.string()
-    .url((i18nextInstance.t('formErrors.url'))),
-  // .notOneOf(loadedFeeds, t('urlExist')),
+    .url((i18nextInstance.t('formErrors.url')))
+    .notOneOf([state.form.url], i18nextInstance.t('formErrors.exist')),
 });
 
 const validate = (fields) => {
@@ -50,7 +49,9 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
   const url = formData.get('url');
+
   watchedObj.form.url = url;
   const error = validate(watchedObj.form);
   watchedObj.errors = Object.keys(error).length !== 0 ? error.url.message : '';
 });
+// console.log(state);
