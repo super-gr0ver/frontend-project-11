@@ -37,8 +37,8 @@ const getSchema = (urls) => yup.object().shape({
 
 const validate = (fields, urls) => {
   try {
-    const schema = getSchema(urls)
-      .validateSync(fields, { abortEarly: false });
+    const schema = getSchema(urls);
+    schema.validateSync(fields, { abortEarly: false });
     return {};
   } catch (e) {
     return _.keyBy(e.inner, 'path');
