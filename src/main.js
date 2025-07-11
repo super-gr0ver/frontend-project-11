@@ -10,9 +10,9 @@ import resources from './locales/ru.js';
 const state = {
   lang: 'ru',
   form: {
-    url: '',
+    currentUrl: '',
   },
-  rssLinks: {},
+  urls: [],
   processState: '',
   errors: '',
 };
@@ -28,15 +28,17 @@ const run = async () => {
 };
 run();
 
-const schema = yup.object().shape({
-  url: yup.string()
+const getSchema = (urls) => yup.object().shape({
+  currentUrl: yup.string()
     .url((i18nextInstance.t('formErrors.url')))
-    .notOneOf([state.form.url], i18nextInstance.t('formErrors.exist')),
+    .trim()
+    .notOneOf(urls, i18nextInstance.t('formErrors.exist')),
 });
 
-const validate = (fields) => {
+const validate = (fields, urls) => {
   try {
-    schema.validateSync(fields, { abortEarly: false });
+    const schema = getSchema(urls)
+      .validateSync(fields, { abortEarly: false });
     return {};
   } catch (e) {
     return _.keyBy(e.inner, 'path');
@@ -49,9 +51,17 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
   const url = formData.get('url');
+  state.form.currentUrl = url;
 
-  watchedObj.form.url = url;
-  const error = validate(watchedObj.form);
-  watchedObj.errors = Object.keys(error).length !== 0 ? error.url.message : '';
+  const error = validate(state.form, state.urls);
+  // watchedObj.errors = Object.keys(error).length !== 0 ? error.url.message : '';
+
+  if (Object.keys(error).length !== 0) {
+    watchedObj.errors = error.currentUrl.message;
+    return;
+  }
+
+  watchedObj.urls.push(url);
+  watchedObj.errors = '';
+  console.log(state);
 });
-// console.log(state);

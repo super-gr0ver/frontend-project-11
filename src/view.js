@@ -7,7 +7,7 @@ const view = (state) => {
   input.classList.remove('is-invalid');
 
   if (state.errors) {
-    input.value = state.form.url;
+    input.value = state.form.currentUrl;
     input.classList.add('is-invalid');
     feedback.textContent = state.errors;
   }
