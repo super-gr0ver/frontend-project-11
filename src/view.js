@@ -1,15 +1,15 @@
-const input = document.querySelector(".form-control");
-const feedback = document.querySelector(".feedback");
+const input = document.querySelector('.form-control');
+const feedback = document.querySelector('.feedback');
 
 const view = (state) => {
-  input.value = "";
-  feedback.textContent = "";
-  input.classList.remove("is-invalid");
+  input.value = '';
+  feedback.textContent = '';
+  input.classList.remove('is-invalid');
   input.focus();
 
   if (state.errors) {
     input.value = state.form.currentUrl;
-    input.classList.add("is-invalid");
+    input.classList.add('is-invalid');
     feedback.textContent = state.errors;
   }
 };
