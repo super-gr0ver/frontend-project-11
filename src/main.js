@@ -18,6 +18,7 @@ const state = {
 };
 
 const form = document.querySelector('.rss-form');
+const input = document.querySelector('.form-control');
 
 const i18nextInstance = i18n.createInstance();
 const run = async () => {
@@ -28,12 +29,21 @@ const run = async () => {
 };
 run();
 
+yup.setLocale({
+  string: {
+    url: () => i18nextInstance.t('formErrors.url'),
+  },
+  mixed: {
+    notOneOf: () => i18nextInstance.t('formErrors.exist'),
+  },
+});
+
 const getSchema = (urls) => yup.object().shape({
   currentUrl: yup
     .string()
-    .url(i18nextInstance.t('formErrors.url'))
+    .url()
     .trim()
-    .notOneOf(urls, i18nextInstance.t('formErrors.exist')),
+    .notOneOf(urls),
 });
 
 const validate = (fields, urls) => {
@@ -47,6 +57,7 @@ const watchedObj = onChange(state, () => view(state));
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+  state.processState = 'processed';
   const formData = new FormData(e.target);
   const url = formData.get('url');
   state.form.currentUrl = url;
@@ -61,6 +72,11 @@ form.addEventListener('submit', (e) => {
       watchedObj.errors = '';
       watchedObj.urls.push(url);
     });
-
-  // watchedObj.errors = Object.keys(error).length !== 0 ? error.url.message : '';
+});
+// Не правильно работает
+input.addEventListener('input', (e) => {
+  console.log(e.target.value);
+  if (e.target.value === '') {
+    watchedObj.processState = 'filling';
+  }
 });
