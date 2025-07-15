@@ -51,7 +51,7 @@ form.addEventListener('submit', (e) => {
   const url = formData.get('url');
   state.form.currentUrl = url;
 
-  const error = validate(state.form, state.urls)
+  validate(state.form, state.urls)
     .then((data) => {
       if (Object.keys(data).length !== 0) {
         watchedObj.errors = data.currentUrl.message;
