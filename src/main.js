@@ -55,28 +55,31 @@ const validate = (fields, urls) => {
 
 const watchedObj = onChange(state, () => view(state));
 
+input.addEventListener('input', () => {
+  watchedObj.errors = '';
+  watchedObj.processState = 'filling';
+});
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  state.processState = 'processed';
+
   const formData = new FormData(e.target);
   const url = formData.get('url');
+
   state.form.currentUrl = url;
 
   validate(state.form, state.urls)
-    .then((data) => {
-      if (Object.keys(data).length !== 0) {
-        watchedObj.errors = data.currentUrl.message;
+    .then((errorObj) => {
+      if (Object.keys(errorObj).length !== 0) {
+        watchedObj.errors = errorObj.currentUrl.message;
       }
     })
     .catch(() => {
       watchedObj.errors = '';
       watchedObj.urls.push(url);
+      watchedObj.processState = 'processed';
     });
 });
 // Не правильно работает
-input.addEventListener('input', (e) => {
-  console.log(e.target.value);
-  if (e.target.value === '') {
-    watchedObj.processState = 'filling';
-  }
-});
+
+// const { value } = e.target;

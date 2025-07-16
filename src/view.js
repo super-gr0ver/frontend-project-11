@@ -3,13 +3,18 @@ const feedback = document.querySelector('.feedback');
 const addUrlBtn = document.querySelector('[type="submit"]');
 
 const view = (state) => {
-  // Не правильно работает
+  // console.log(state);
   if (state.processState === 'filling') {
+    feedback.textContent = '';
+    input.classList.remove('is-invalid');
+    addUrlBtn.disabled = false;
+  }
+
+  if (state.processState === 'processed') {
     input.value = '';
     feedback.textContent = '';
     input.classList.remove('is-invalid');
     input.focus();
-    addUrlBtn.disabled = false;
   }
 
   if (state.errors) {
@@ -17,12 +22,7 @@ const view = (state) => {
     input.classList.add('is-invalid');
     feedback.textContent = state.errors;
     addUrlBtn.disabled = true;
+    input.focus();
   }
-
-  // input.addEventListener('input', (e) => {
-  //   if (e.target.value === '') {
-  //     addUrlBtn.disabled = false;
-  //   }
-  // });
 };
 export default view;
