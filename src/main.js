@@ -76,6 +76,7 @@ form.addEventListener("submit", (e) => {
       }
     })
     .catch(() => {
+      watchedObj.rssStatus = i18nextInstance.t("rssStatus.done");
       watchedObj.errors = "";
       watchedObj.urls.push(url);
       watchedObj.processState = "processed";
@@ -96,6 +97,9 @@ const getRss = (url) => {
       const allTitle = doc.querySelectorAll("title").forEach((item) => {
         console.log(item.textContent);
       });
+    })
+    .catch(() => {
+      console.log("ooops");
     });
 };
 getRss();

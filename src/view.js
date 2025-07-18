@@ -12,12 +12,16 @@ const view = (state) => {
       break;
     case "processed":
       input.value = "";
-      feedback.textContent = "";
+      feedback.textContent = state.rssStatus;
+      feedback.classList.remove("text-danger");
       input.classList.remove("is-invalid");
+      feedback.classList.add("text-success");
       input.focus();
       break;
     case "error":
       input.value = state.form.currentUrl;
+      feedback.classList.remove("text-success");
+      feedback.classList.add("text-danger");
       input.classList.add("is-invalid");
       feedback.textContent = state.errors;
       addUrlBtn.disabled = true;
