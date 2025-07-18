@@ -76,8 +76,8 @@ form.addEventListener("submit", (e) => {
       }
     })
     .catch(() => {
-      watchedObj.rssStatus = i18nextInstance.t("rssStatus.done");
       watchedObj.errors = "";
+      watchedObj.rssStatus = i18nextInstance.t("rssStatus.done");
       watchedObj.urls.push(url);
       watchedObj.processState = "processed";
       getRss(url);
@@ -85,7 +85,7 @@ form.addEventListener("submit", (e) => {
 });
 
 const getRss = (url) => {
-  const response = axios
+  axios
     .get(
       `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
         url
@@ -103,7 +103,3 @@ const getRss = (url) => {
     });
 };
 getRss();
-
-// Не правильно работает
-
-// const { value } = e.target;

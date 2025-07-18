@@ -3,7 +3,7 @@ const feedback = document.querySelector(".feedback");
 const addUrlBtn = document.querySelector('[type="submit"]');
 
 const view = (state) => {
-  console.log(state);
+  // console.log(state);
   switch (state.processState) {
     case "filling":
       feedback.textContent = "";
@@ -20,10 +20,10 @@ const view = (state) => {
       break;
     case "error":
       input.value = state.form.currentUrl;
+      feedback.textContent = state.errors;
       feedback.classList.remove("text-success");
       feedback.classList.add("text-danger");
       input.classList.add("is-invalid");
-      feedback.textContent = state.errors;
       addUrlBtn.disabled = true;
       input.focus();
       break;
