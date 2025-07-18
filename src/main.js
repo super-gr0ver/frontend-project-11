@@ -1,25 +1,26 @@
-import onChange from 'on-change';
-import * as yup from 'yup';
-import * as _ from 'lodash';
-import i18n from 'i18next';
-import axios from 'axios';
-import view from './view.js';
+import onChange from "on-change";
+import * as yup from "yup";
+import * as _ from "lodash";
+import i18n from "i18next";
+import axios from "axios";
+import view from "./view.js";
 
-import resources from './locales/ru.js';
-import './style.css';
+import resources from "./locales/ru.js";
+import "./style.css";
 
 const state = {
-  lang: 'ru',
+  lang: "ru",
   form: {
-    currentUrl: '',
+    currentUrl: "",
   },
   urls: [],
-  processState: '',
-  errors: '',
+  processState: "",
+  errors: "",
+  rssStatus: "",
 };
 
-const form = document.querySelector('.rss-form');
-const input = document.querySelector('.form-control');
+const form = document.querySelector(".rss-form");
+const input = document.querySelector(".form-control");
 
 const i18nextInstance = i18n.createInstance();
 const run = async () => {
@@ -32,37 +33,38 @@ run();
 
 yup.setLocale({
   string: {
-    url: () => i18nextInstance.t('formErrors.url'),
+    url: () => i18nextInstance.t("formErrors.url"),
   },
   mixed: {
-    notOneOf: () => i18nextInstance.t('formErrors.exist'),
+    notOneOf: () => i18nextInstance.t("formErrors.exist"),
   },
 });
 
-const getSchema = (urls) => yup.object().shape({
-  currentUrl: yup.string().url().trim().notOneOf(urls),
-});
+const getSchema = (urls) =>
+  yup.object().shape({
+    currentUrl: yup.string().url().trim().notOneOf(urls),
+  });
 
 const validate = (fields, urls) => {
   const schema = getSchema(urls);
   return schema
     .validate(fields, { abortEarly: false })
-    .then(() => { })
-    .catch((e) => _.keyBy(e.inner, 'path'));
+    .then(() => {})
+    .catch((e) => _.keyBy(e.inner, "path"));
 };
 
 const watchedObj = onChange(state, () => view(state));
 
-input.addEventListener('input', () => {
-  watchedObj.processState = 'filling';
-  watchedObj.errors = '';
+input.addEventListener("input", () => {
+  watchedObj.processState = "filling";
+  watchedObj.errors = "";
 });
 
-form.addEventListener('submit', (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(e.target);
-  const url = formData.get('url');
+  const url = formData.get("url");
 
   state.form.currentUrl = url;
 
@@ -70,25 +72,33 @@ form.addEventListener('submit', (e) => {
     .then((errorObj) => {
       if (Object.keys(errorObj).length !== 0) {
         state.errors = errorObj.currentUrl.message;
-        watchedObj.processState = 'error';
+        watchedObj.processState = "error";
       }
     })
     .catch(() => {
-      watchedObj.errors = '';
+      watchedObj.errors = "";
       watchedObj.urls.push(url);
-      watchedObj.processState = 'processed';
+      watchedObj.processState = "processed";
+      getRss(url);
     });
 });
 
-const getUrl = () => {
-  const response = axios.get('https://allorigins.hexlet.app/get?disableCache=true&url=https://lorem-rss.hexlet.app/feed')
+const getRss = (url) => {
+  const response = axios
+    .get(
+      `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+        url
+      )}`
+    )
     .then((data) => {
       const parse = new DOMParser();
-      const doc = parse.parseFromString(data.data.contents, 'application/xml');
-      console.log(doc);
+      const doc = parse.parseFromString(data.data.contents, "application/xml");
+      const allTitle = doc.querySelectorAll("title").forEach((item) => {
+        console.log(item.textContent);
+      });
     });
 };
-getUrl();
+getRss();
 
 // Не правильно работает
 
