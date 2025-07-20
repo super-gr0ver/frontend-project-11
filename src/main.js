@@ -70,14 +70,14 @@ const parseRss = (data) => {
   const doc = parse.parseFromString(data, 'application/xml');
 
   return doc.querySelectorAll('item').forEach((item) => {
-    state.posts.push({
+    watchedObj.posts.push({
       id: Number(uniqueId()),
       text: item.textContent,
     });
     // console.log(doc);
   });
 };
-console.log(state.posts);
+// console.log(state.posts);
 
 const watchedObj = onChange(state, () => view(state));
 

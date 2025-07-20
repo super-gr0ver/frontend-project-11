@@ -12,8 +12,6 @@ card.innerHTML = `
 `;
 
 const ul = document.querySelector('ul');
-const li = document.createElement('li');
-li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
 // const cardBody = document.createElement('div');
 // cardBody.classList.add('card-body');
@@ -30,11 +28,8 @@ li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-
 // card.appendChild(postsList);
 
 const view = (state) => {
-  console.log(state.posts);
-  state.posts.forEach((item) => {
-    li.textContent = item.text;
-    ul.appendChild(li);
-  });
+  // console.log(state.posts);
+
   switch (state.processState) {
     case 'filling':
       feedback.textContent = '';
@@ -48,6 +43,13 @@ const view = (state) => {
       input.classList.remove('is-invalid');
       feedback.classList.add('text-success');
       input.focus();
+
+      state.posts.forEach((item) => {
+        const ol = document.createElement('ol');
+        ol.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+        ol.textContent = item.text;
+        ul.appendChild(ol);
+      });
       break;
     case 'error':
       input.value = state.form.currentUrl;
