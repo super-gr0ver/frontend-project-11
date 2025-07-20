@@ -65,21 +65,23 @@ const validate = (fields, urls) => {
     .catch((e) => _.keyBy(e.inner, 'path'));
 };
 
+const watchedObj = onChange(state, () => view(state));
+
 const parseRss = (data) => {
   const parse = new DOMParser();
   const doc = parse.parseFromString(data, 'application/xml');
-
-  return doc.querySelectorAll('item').forEach((item) => {
-    watchedObj.posts.push({
+  console.log(doc);
+  doc.querySelectorAll('item').forEach((item) => {
+    const title = item.querySelector('title');
+    const link = item.querySelector('link');
+    state.posts.push({
       id: Number(uniqueId()),
-      text: item.textContent,
+      title: title.textContent,
+      link: link.textContent,
     });
-    // console.log(doc);
   });
+  watchedObj.processState = 'done';
 };
-// console.log(state.posts);
-
-const watchedObj = onChange(state, () => view(state));
 
 input.addEventListener('input', () => {
   watchedObj.processState = 'filling';
@@ -106,8 +108,7 @@ form.addEventListener('submit', (e) => {
       watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
       watchedObj.urls.push(url);
       watchedObj.processState = 'processed';
-
-      getRss(url)
-        .then((data) => parseRss(data));
     });
+  getRss(url)
+    .then((data) => parseRss(data));
 });
