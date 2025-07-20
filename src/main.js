@@ -3,10 +3,22 @@ import * as yup from 'yup';
 import * as _ from 'lodash';
 import i18n from 'i18next';
 import axios from 'axios';
+import uniqueId from 'lodash/uniqueId.js';
 import view from './view.js';
 
 import resources from './locales/ru.js';
 import './style.css';
+
+const getRss = (url) => axios
+  .get(
+    `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+      url,
+    )}`,
+  )
+  .then((flow) => flow.data.contents)
+  .catch(() => {
+    console.log('ooops');
+  });
 
 const state = {
   lang: 'ru',
@@ -17,9 +29,7 @@ const state = {
   processState: '',
   errors: '',
   rssStatus: '',
-  posts: {
-
-  },
+  posts: [],
 };
 
 const form = document.querySelector('.rss-form');
@@ -57,27 +67,17 @@ const validate = (fields, urls) => {
 
 const parseRss = (data) => {
   const parse = new DOMParser();
-  const doc = parse.parseFromString(data.data.contents, 'application/xml');
-  return doc.querySelectorAll('title').forEach((item) => {
-    state.posts = item.textContent;
-    // console.log(item.textContent);
+  const doc = parse.parseFromString(data, 'application/xml');
+
+  return doc.querySelectorAll('item').forEach((item) => {
+    state.posts.push({
+      id: Number(uniqueId()),
+      text: item.textContent,
+    });
+    // console.log(doc);
   });
 };
-// console.log(state.posts);
-const getRss = (url) => {
-  axios
-    .get(
-      `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-        url,
-      )}`,
-    )
-    .then((data) => {
-      parseRss(data);
-    })
-    .catch(() => {
-      // console.log('ooops');
-    });
-};
+console.log(state.posts);
 
 const watchedObj = onChange(state, () => view(state));
 
@@ -106,6 +106,8 @@ form.addEventListener('submit', (e) => {
       watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
       watchedObj.urls.push(url);
       watchedObj.processState = 'processed';
-      getRss(url);
+
+      getRss(url)
+        .then((data) => parseRss(data));
     });
 });

@@ -15,8 +15,6 @@ const ul = document.querySelector('ul');
 const li = document.createElement('li');
 li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
-ul.appendChild(li);
-
 // const cardBody = document.createElement('div');
 // cardBody.classList.add('card-body');
 
@@ -32,7 +30,11 @@ ul.appendChild(li);
 // card.appendChild(postsList);
 
 const view = (state) => {
-  // console.log(state.posts);
+  console.log(state.posts);
+  state.posts.forEach((item) => {
+    li.textContent = item.text;
+    ul.appendChild(li);
+  });
   switch (state.processState) {
     case 'filling':
       feedback.textContent = '';
