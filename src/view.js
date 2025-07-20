@@ -1,25 +1,38 @@
 const input = document.querySelector('.form-control');
 const feedback = document.querySelector('.feedback');
 const addUrlBtn = document.querySelector('[type="submit"]');
-const postsContainer = document.querySelector('.posts');
+// const postsContainer = document.querySelector('.posts');
 const card = document.querySelector('.card');
 
-const cardBody = document.createElement('div');
-cardBody.classList.add('card-body');
+card.innerHTML = `
+<div class="card-body">
+  <h2 class="card-title h4">Посты</h2>
+</div>
+<ul class="list-group border-0 rounded-0"></ul>
+`;
 
-const cardTitle = document.createElement('h2');
-cardTitle.classList.add('card-title', 'h4');
-cardTitle.textContent = 'Посты';
+const ul = document.querySelector('ul');
+const li = document.createElement('li');
+li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
-card.appendChild(cardBody);
-cardBody.appendChild(cardTitle);
+ul.appendChild(li);
 
-const postsList = document.createElement('ul');
-postsList.classList.add('list-group', 'border-0', 'rounded-0');
-card.appendChild(postsList);
+// const cardBody = document.createElement('div');
+// cardBody.classList.add('card-body');
+
+// const cardTitle = document.createElement('h2');
+// cardTitle.classList.add('card-title', 'h4');
+// cardTitle.textContent = 'Посты';
+
+// card.appendChild(cardBody);
+// cardBody.appendChild(cardTitle);
+
+// const postsList = document.createElement('ul');
+// postsList.classList.add('list-group', 'border-0', 'rounded-0');
+// card.appendChild(postsList);
 
 const view = (state) => {
-  console.log(state);
+  // console.log(state.posts);
   switch (state.processState) {
     case 'filling':
       feedback.textContent = '';

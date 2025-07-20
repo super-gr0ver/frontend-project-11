@@ -17,6 +17,9 @@ const state = {
   processState: '',
   errors: '',
   rssStatus: '',
+  posts: {
+
+  },
 };
 
 const form = document.querySelector('.rss-form');
@@ -56,10 +59,11 @@ const parseRss = (data) => {
   const parse = new DOMParser();
   const doc = parse.parseFromString(data.data.contents, 'application/xml');
   return doc.querySelectorAll('title').forEach((item) => {
-    console.log(item.textContent);
+    state.posts = item.textContent;
+    // console.log(item.textContent);
   });
 };
-
+// console.log(state.posts);
 const getRss = (url) => {
   axios
     .get(
@@ -71,7 +75,7 @@ const getRss = (url) => {
       parseRss(data);
     })
     .catch(() => {
-      console.log('ooops');
+      // console.log('ooops');
     });
 };
 
