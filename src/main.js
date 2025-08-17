@@ -9,17 +9,6 @@ import view from './view.js';
 import resources from './locales/ru.js';
 import './style.css';
 
-const getRss = (url) => axios
-  .get(
-    `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-      url,
-    )}`,
-  )
-  .then((flow) => flow.data.contents)
-  .catch(() => {
-    console.log('ooops');
-  });
-
 const state = {
   lang: 'ru',
   form: {
@@ -30,7 +19,27 @@ const state = {
   errors: '',
   rssStatus: '',
   posts: [],
+  feeds: {
+    title: '',
+    description: '',
+  },
+  requestFreq: {
+    length: '',
+    interval: '',
+    unit: '',
+  },
 };
+
+const getRss = (url) => axios
+  .get(
+    `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+      url,
+    )}`,
+  );
+// .catch(() => {
+//   state.errors = 'error';
+// })
+// .finally(() => setTimeout(getRss, 10000));
 
 const form = document.querySelector('.rss-form');
 const input = document.querySelector('.form-control');
@@ -70,15 +79,28 @@ const watchedObj = onChange(state, () => view(state));
 const parseRss = (data) => {
   const parse = new DOMParser();
   const doc = parse.parseFromString(data, 'application/xml');
-  console.log(doc);
+  // console.log(doc);
+
+  const feedTitle = doc.querySelector('title');
+  const feedDesc = doc.querySelector('description');
+  state.feeds.title = feedTitle.textContent;
+  state.feeds.description = feedDesc.textContent;
+
   doc.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
     const link = item.querySelector('link');
-    state.posts.push({
-      id: Number(uniqueId()),
-      title: title.textContent,
-      link: link.textContent,
-    });
+    console.log(title);
+
+    // Проверка, если title нет в состоянии то добавляем
+    const uniqId = !state.posts.find(({ title }) => title === title.textContent);
+    // console.log(uniqId);
+    if (uniqId) {
+      state.posts.push({
+        id: Number(uniqueId()),
+        title: title.textContent,
+        link: link.textContent,
+      });
+    }
   });
   watchedObj.processState = 'done';
 };
@@ -93,8 +115,17 @@ form.addEventListener('submit', (e) => {
 
   const formData = new FormData(e.target);
   const url = formData.get('url');
-
   state.form.currentUrl = url;
+
+  const requestFreq = new URL(url);
+  const interval = requestFreq.searchParams.get('interval');
+  const unit = requestFreq.searchParams.get('unit');
+  const length = requestFreq.searchParams.get('length');
+  state.length = length;
+  state.interval = interval;
+  state.unit = unit;
+
+  // console.log(interval, unit);
 
   validate(state.form, state.urls)
     .then((errorObj) => {
@@ -110,5 +141,10 @@ form.addEventListener('submit', (e) => {
       watchedObj.processState = 'processed';
     });
   getRss(url)
-    .then((data) => parseRss(data));
+    .then((flow) => flow.data.contents)
+    .then((data) => parseRss(data))
+    .catch(() => {
+      watchedObj.processState = 'error';
+      watchedObj.errors = i18nextInstance.t('rssStatus.networkError');
+    });
 });

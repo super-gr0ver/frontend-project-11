@@ -1,18 +1,38 @@
 const input = document.querySelector('.form-control');
 const feedback = document.querySelector('.feedback');
 const addUrlBtn = document.querySelector('[type="submit"]');
-// const postsContainer = document.querySelector('.posts');
-const card = document.querySelector('.card');
+const postsContainer = document.querySelector('.posts');
+const feedContainer = document.querySelector('.feeds');
 
-card.innerHTML = `
-<div class="card-body">
-  <h2 class="card-title h4">Посты</h2>
+postsContainer.innerHTML = `
+<div class="card border-0">
+  <div class="card-body">
+    <h2 class="card-title h4"></h2>
+  </div>
+  <ul class="list-group border-0 rounded-0"></ul>
 </div>
-<ul class="list-group border-0 rounded-0"></ul>
 `;
+const postsUl = postsContainer.querySelector('ul');
 
-const ul = document.querySelector('ul');
+feedContainer.innerHTML = `
+<div class="card border-0">
+  <div class="card-body">
+    <h2 class="card-title h4"></h2>
+  </div>
+  <ul class="list-group border-0 rounded-0">
+    <li class="list-group-item border-0 border-end-0">
+      <h3 class="h6 m-0"></h3>
+      <p class="m-0 small text-black-50"></p>
+    </li>
+  </ul>
+</div>
+`;
+const feedsHeader = feedContainer.querySelector('h2');
+const postsHeader = postsContainer.querySelector('h2');
 
+const feedsTitle = feedContainer.querySelector('h3');
+const feedsDesc = feedContainer.querySelector('p');
+// console.log(feedsTitle);
 // const cardBody = document.createElement('div');
 // cardBody.classList.add('card-body');
 
@@ -28,7 +48,7 @@ const ul = document.querySelector('ul');
 // card.appendChild(postsList);
 
 const view = (state) => {
-  // console.log(state.posts);
+  // console.log(state.feeds.title);
 
   switch (state.processState) {
     case 'filling':
@@ -54,23 +74,29 @@ const view = (state) => {
       input.focus();
       break;
     case 'done':
-      // console.log(state.posts);
+
+      // console.log(state.feeds);
+      feedsHeader.textContent = 'Фиды';
+      postsHeader.textContent = 'Посты';
+
+      feedsTitle.textContent = state.feeds.title;
+      feedsDesc.textContent = state.feeds.description;
 
       state.posts.forEach((post) => {
         // console.log(post);
         const button = document.createElement('button');
-        const li = document.createElement('li');
-        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+        const postsLi = document.createElement('li');
+        postsLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
         const a = document.createElement('a');
         a.classList.add('fw-bold');
         a.setAttribute('href', post.link);
         a.setAttribute('data-id', post.id);
         a.setAttribute('target', '_blank');
         a.setAttribute('rel', 'noopener noreferrer');
-        li.append(a);
+        postsLi.append(a);
         a.textContent = post.title;
 
-        li.append(button);
+        postsLi.append(button);
         button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
         button.textContent = 'Просмотр';
         button.setAttribute('type', 'button');
@@ -78,7 +104,7 @@ const view = (state) => {
         button.setAttribute('data-bs-toggle', 'modal');
         button.setAttribute('data-bs-target', '#modal');
 
-        ul.appendChild(li);
+        postsUl.appendChild(postsLi);
       });
 
       break;
