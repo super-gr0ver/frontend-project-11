@@ -89,7 +89,7 @@ const parseRss = (data) => {
   doc.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
     const link = item.querySelector('link');
-    console.log(title);
+    // console.log(title);
 
     // Проверка, если title нет в состоянии то добавляем
     const uniqId = !state.posts.find(({ title }) => title === title.textContent);
@@ -140,11 +140,17 @@ form.addEventListener('submit', (e) => {
       watchedObj.urls.push(url);
       watchedObj.processState = 'processed';
     });
-  getRss(url)
-    .then((flow) => flow.data.contents)
-    .then((data) => parseRss(data))
-    .catch(() => {
-      watchedObj.processState = 'error';
-      watchedObj.errors = i18nextInstance.t('rssStatus.networkError');
-    });
+  const updateRss = () => {
+    getRss(url)
+      .then((flow) => flow.data.contents)
+      .then((data) => parseRss(data))
+      .catch(() => {
+        watchedObj.processState = 'error';
+        watchedObj.errors = i18nextInstance.t('rssStatus.networkError');
+      })
+      .finally(() => {
+        setTimeout(updateRss, 5000);
+      });
+  };
+  updateRss();
 });
