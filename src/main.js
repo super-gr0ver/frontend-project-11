@@ -25,7 +25,7 @@ const state = {
   },
   requestFreq: {
     length: '',
-    interval: '',
+    interval: 5000,
     unit: '',
   },
 };
@@ -149,7 +149,7 @@ form.addEventListener('submit', (e) => {
         watchedObj.errors = i18nextInstance.t('rssStatus.networkError');
       })
       .finally(() => {
-        setTimeout(updateRss, 5000);
+        setTimeout(updateRss, state.requestFreq.interval);
       });
   };
   updateRss();
