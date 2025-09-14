@@ -24,8 +24,8 @@ const state = {
     description: '',
   },
   requestFreq: {
-    length: '',
-    interval: 5000,
+    length: 10,
+    interval: 1,
     unit: '',
   },
 };
@@ -51,7 +51,6 @@ const run = async () => {
     resources,
   });
 };
-run();
 
 yup.setLocale({
   string: {
@@ -61,9 +60,70 @@ yup.setLocale({
     notOneOf: () => i18nextInstance.t('formErrors.exist'),
   },
 });
+run();
+// const requestFreq = new URL(url);
+// const length = requestFreq.searchParams.get('length');
+
+const getInterval = (url) => {
+  const requestFreq = new URL(url);
+
+  const unit = requestFreq.searchParams.get('unit');
+
+  const stringInterval = requestFreq.searchParams.get('interval');
+  let { interval } = state.requestFreq;
+  // Из за этого не работает месяц
+  if (stringInterval) {
+    interval = Math.floor(Number(stringInterval.replace(',', '.'), 10));
+  }
+
+  switch (unit) {
+    case 'second':
+      if ((interval <= 60) && (60 % interval === 0)) {
+        state.requestFreq.interval = interval * 1000;
+        return true;
+      }
+      return false;
+    case 'minute':
+      if ((interval <= 60) && (60 % interval === 0)) {
+        state.requestFreq.interval = interval * 60000;
+        return true;
+      }
+      return false;
+    case 'day':
+      if (interval === 1) {
+        state.requestFreq.interval = interval * 86400000;
+        return true;
+      }
+      return false;
+    case 'month':
+      // Месяцы работают не верно
+      if ((interval <= 12) && (12 % interval === 0)) {
+        state.requestFreq.interval = interval * 2678400000;
+        return true;
+      }
+      return false;
+    case 'year':
+      if (interval === 1) {
+        state.requestFreq.interval = interval * 31536000000;
+        return true;
+      }
+      return false;
+
+    default:
+      return false;
+  }
+};
 
 const getSchema = (urls) => yup.object().shape({
-  currentUrl: yup.string().url().trim().notOneOf(urls),
+  currentUrl: yup
+    .string()
+    .url()
+    .trim()
+    .notOneOf(urls)
+    .test('checkInterval', 'Не верный интервал обновления', (url) => {
+      const isValidInterval = getInterval(url);
+      return isValidInterval === true;
+    }),
 });
 
 const validate = (fields, urls) => {
@@ -79,7 +139,6 @@ const watchedObj = onChange(state, () => view(state));
 const parseRss = (data) => {
   const parse = new DOMParser();
   const doc = parse.parseFromString(data, 'application/xml');
-  // console.log(doc);
 
   const feedTitle = doc.querySelector('title');
   const feedDesc = doc.querySelector('description');
@@ -117,29 +176,6 @@ form.addEventListener('submit', (e) => {
   const url = formData.get('url');
   state.form.currentUrl = url;
 
-  const requestFreq = new URL(url);
-  const interval = requestFreq.searchParams.get('interval');
-  const unit = requestFreq.searchParams.get('unit');
-  const length = requestFreq.searchParams.get('length');
-  state.length = length;
-  state.interval = interval;
-  state.unit = unit;
-
-  // console.log(interval, unit);
-
-  validate(state.form, state.urls)
-    .then((errorObj) => {
-      if (Object.keys(errorObj).length !== 0) {
-        state.errors = errorObj.currentUrl.message;
-        watchedObj.processState = 'error';
-      }
-    })
-    .catch(() => {
-      watchedObj.errors = '';
-      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
-      watchedObj.urls.push(url);
-      watchedObj.processState = 'processed';
-    });
   const updateRss = () => {
     getRss(url)
       .then((flow) => flow.data.contents)
@@ -149,8 +185,24 @@ form.addEventListener('submit', (e) => {
         watchedObj.errors = i18nextInstance.t('rssStatus.networkError');
       })
       .finally(() => {
+        // console.log(state.requestFreq.interval);
         setTimeout(updateRss, state.requestFreq.interval);
       });
   };
-  updateRss();
+
+  validate(state.form, state.urls)
+    .then((errorObj) => {
+      if (Object.keys(errorObj).length !== 0) {
+        state.errors = errorObj.currentUrl.message;
+        watchedObj.processState = 'error';
+      }
+    })
+    .catch(() => {
+      updateRss();
+      watchedObj.errors = '';
+      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      watchedObj.urls.push(url);
+      watchedObj.processState = 'processed';
+      // getInterval(unit, interval);
+    });
 });
