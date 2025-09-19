@@ -1,48 +1,48 @@
-import onChange from 'on-change';
-import * as yup from 'yup';
-import * as _ from 'lodash';
-import i18n from 'i18next';
-import axios from 'axios';
-import uniqueId from 'lodash/uniqueId.js';
-import view from './view.js';
+import onChange from "on-change";
+import * as yup from "yup";
+import * as _ from "lodash";
+import i18n from "i18next";
+import axios from "axios";
+import uniqueId from "lodash/uniqueId.js";
+import view from "./view.js";
 
-import resources from './locales/ru.js';
-import './style.css';
+import resources from "./locales/ru.js";
+import "./style.css";
 
 const state = {
-  lang: 'ru',
+  lang: "ru",
   form: {
-    currentUrl: '',
+    currentUrl: "",
   },
   urls: [],
-  processState: '',
-  errors: '',
-  rssStatus: '',
+  processState: "",
+  errors: "",
+  rssStatus: "",
   posts: [],
   feeds: {
-    title: '',
-    description: '',
+    title: "",
+    description: "",
   },
   requestFreq: {
     length: 10,
     interval: 1,
-    unit: '',
+    unit: "",
   },
 };
 
-const getRss = (url) => axios
-  .get(
+const getRss = (url) =>
+  axios.get(
     `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-      url,
-    )}`,
+      url
+    )}`
   );
 // .catch(() => {
 //   state.errors = 'error';
 // })
 // .finally(() => setTimeout(getRss, 10000));
 
-const form = document.querySelector('.rss-form');
-const input = document.querySelector('.form-control');
+const form = document.querySelector(".rss-form");
+const input = document.querySelector(".form-control");
 
 const i18nextInstance = i18n.createInstance();
 const run = async () => {
@@ -54,55 +54,56 @@ const run = async () => {
 
 yup.setLocale({
   string: {
-    url: () => i18nextInstance.t('formErrors.url'),
+    url: () => i18nextInstance.t("formErrors.url"),
   },
   mixed: {
-    notOneOf: () => i18nextInstance.t('formErrors.exist'),
+    notOneOf: () => i18nextInstance.t("formErrors.exist"),
   },
 });
 run();
 // const requestFreq = new URL(url);
 // const length = requestFreq.searchParams.get('length');
 
-const getInterval = (url) => {
+const isValidInterval = (url) => {
   const requestFreq = new URL(url);
 
-  const unit = requestFreq.searchParams.get('unit');
+  const unit = requestFreq.searchParams.get("unit");
 
-  const stringInterval = requestFreq.searchParams.get('interval');
-  let { interval } = state.requestFreq;
-  // Из за этого не работает месяц
-  if (stringInterval) {
-    interval = Math.floor(Number(stringInterval.replace(',', '.'), 10));
-  }
+  const stringInterval = requestFreq.searchParams.get("interval");
+
+  const interval = stringInterval
+    ? Math.floor(Number(stringInterval.replace(",", "."), 10))
+    : state.requestFreq.interval;
 
   switch (unit) {
-    case 'second':
-      if ((interval <= 60) && (60 % interval === 0)) {
+    case "second":
+      if (interval <= 60 && 60 % interval === 0) {
         state.requestFreq.interval = interval * 1000;
         return true;
       }
       return false;
-    case 'minute':
-      if ((interval <= 60) && (60 % interval === 0)) {
+    case "minute":
+      if (interval <= 60 && 60 % interval === 0) {
         state.requestFreq.interval = interval * 60000;
         return true;
       }
       return false;
-    case 'day':
+    case "day":
       if (interval === 1) {
         state.requestFreq.interval = interval * 86400000;
         return true;
       }
       return false;
-    case 'month':
+    case "month":
       // Месяцы работают не верно
-      if ((interval <= 12) && (12 % interval === 0)) {
-        state.requestFreq.interval = interval * 2678400000;
+
+      if (interval <= 12 && 12 % interval === 0) {
+        state.requestFreq.interval = interval * 2419200000;
+        // 2419200000 / 2678400000
         return true;
       }
       return false;
-    case 'year':
+    case "year":
       if (interval === 1) {
         state.requestFreq.interval = interval * 31536000000;
         return true;
@@ -114,44 +115,49 @@ const getInterval = (url) => {
   }
 };
 
-const getSchema = (urls) => yup.object().shape({
-  currentUrl: yup
-    .string()
-    .url()
-    .trim()
-    .notOneOf(urls)
-    .test('checkInterval', 'Не верный интервал обновления', (url) => {
-      const isValidInterval = getInterval(url);
-      return isValidInterval === true;
-    }),
-});
+const getSchema = (urls) =>
+  yup.object().shape({
+    currentUrl: yup
+      .string()
+      .url()
+      .trim()
+      .notOneOf(urls)
+      .test(
+        "checkInterval",
+        "Не верный интервал обновления",
+        (url) => isValidInterval(url) === true
+      ),
+  });
 
 const validate = (fields, urls) => {
   const schema = getSchema(urls);
+
   return schema
     .validate(fields, { abortEarly: false })
-    .then(() => { })
-    .catch((e) => _.keyBy(e.inner, 'path'));
+    .then(() => {})
+    .catch((e) => _.keyBy(e.inner, "path"));
 };
 
 const watchedObj = onChange(state, () => view(state));
 
 const parseRss = (data) => {
   const parse = new DOMParser();
-  const doc = parse.parseFromString(data, 'application/xml');
+  const doc = parse.parseFromString(data, "application/xml");
 
-  const feedTitle = doc.querySelector('title');
-  const feedDesc = doc.querySelector('description');
+  const feedTitle = doc.querySelector("title");
+  const feedDesc = doc.querySelector("description");
   state.feeds.title = feedTitle.textContent;
   state.feeds.description = feedDesc.textContent;
 
-  doc.querySelectorAll('item').forEach((item) => {
-    const title = item.querySelector('title');
-    const link = item.querySelector('link');
+  doc.querySelectorAll("item").forEach((item) => {
+    const title = item.querySelector("title");
+    const link = item.querySelector("link");
     // console.log(title);
 
     // Проверка, если title нет в состоянии то добавляем
-    const uniqId = !state.posts.find(({ title }) => title === title.textContent);
+    const uniqId = !state.posts.find(
+      ({ title }) => title === title.textContent
+    );
     // console.log(uniqId);
     if (uniqId) {
       state.posts.push({
@@ -161,32 +167,32 @@ const parseRss = (data) => {
       });
     }
   });
-  watchedObj.processState = 'done';
+  watchedObj.processState = "done";
 };
 
-input.addEventListener('input', () => {
-  watchedObj.processState = 'filling';
-  watchedObj.errors = '';
+input.addEventListener("input", () => {
+  watchedObj.processState = "filling";
+  watchedObj.errors = "";
 });
 
-form.addEventListener('submit', (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(e.target);
-  const url = formData.get('url');
+  const url = formData.get("url");
   state.form.currentUrl = url;
 
   const updateRss = () => {
     getRss(url)
       .then((flow) => flow.data.contents)
-      .then((data) => parseRss(data))
-      .catch(() => {
-        watchedObj.processState = 'error';
-        watchedObj.errors = i18nextInstance.t('rssStatus.networkError');
-      })
-      .finally(() => {
-        // console.log(state.requestFreq.interval);
+      .then((data) => {
+        parseRss(data);
+        console.log(state.requestFreq.interval);
         setTimeout(updateRss, state.requestFreq.interval);
+      })
+      .catch(() => {
+        watchedObj.processState = "error";
+        watchedObj.errors = i18nextInstance.t("rssStatus.networkError");
       });
   };
 
@@ -194,15 +200,15 @@ form.addEventListener('submit', (e) => {
     .then((errorObj) => {
       if (Object.keys(errorObj).length !== 0) {
         state.errors = errorObj.currentUrl.message;
-        watchedObj.processState = 'error';
+        watchedObj.processState = "error";
       }
     })
     .catch(() => {
       updateRss();
-      watchedObj.errors = '';
-      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      watchedObj.errors = "";
+      watchedObj.rssStatus = i18nextInstance.t("rssStatus.done");
       watchedObj.urls.push(url);
-      watchedObj.processState = 'processed';
+      watchedObj.processState = "processed";
       // getInterval(unit, interval);
     });
 });
