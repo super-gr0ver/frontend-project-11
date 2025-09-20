@@ -38,17 +38,6 @@ const getRss = (url) => axios
 
   );
 
-const getRequestFreq = (url) => {
-  const requestFreq = new URL(url);
-  const unit = requestFreq.searchParams.get('unit');
-  const stringInterval = requestFreq.searchParams.get('interval');
-  const interval = stringInterval
-    ? Number(stringInterval.replace(',', '.'))
-    : state.requestFreq.interval;
-
-  return { unit, interval };
-};
-
 const form = document.querySelector('.rss-form');
 const input = document.querySelector('.form-control');
 
