@@ -19,33 +19,16 @@ feedContainer.innerHTML = `
   <div class="card-body">
     <h2 class="card-title h4"></h2>
   </div>
-  <ul class="list-group border-0 rounded-0">
-    <li class="list-group-item border-0 border-end-0">
-      <h3 class="h6 m-0"></h3>
-      <p class="m-0 small text-black-50"></p>
-    </li>
-  </ul>
+  <ul class="list-group border-0 rounded-0"></ul>
 </div>
 `;
+const feedUl = feedContainer.querySelector('ul');
+
 const feedsHeader = feedContainer.querySelector('h2');
 const postsHeader = postsContainer.querySelector('h2');
 
-const feedsTitle = feedContainer.querySelector('h3');
-const feedsDesc = feedContainer.querySelector('p');
-// console.log(feedsTitle);
-// const cardBody = document.createElement('div');
-// cardBody.classList.add('card-body');
-
-// const cardTitle = document.createElement('h2');
-// cardTitle.classList.add('card-title', 'h4');
-// cardTitle.textContent = 'Посты';
-
-// card.appendChild(cardBody);
-// cardBody.appendChild(cardTitle);
-
-// const postsList = document.createElement('ul');
-// postsList.classList.add('list-group', 'border-0', 'rounded-0');
-// card.appendChild(postsList);
+// const feedsTitle = feedContainer.querySelector('h3');
+// const feedsDesc = feedContainer.querySelector('p');
 
 const view = (state) => {
   // console.log(state.feeds.title);
@@ -75,12 +58,28 @@ const view = (state) => {
       break;
     case 'done':
 
-      // console.log(state.feeds);
+      console.log(state.feeds);
       feedsHeader.textContent = 'Фиды';
       postsHeader.textContent = 'Посты';
 
-      feedsTitle.textContent = state.feeds.title;
-      feedsDesc.textContent = state.feeds.description;
+      feedUl.innerHTML = '';
+      state.feeds.forEach((feed) => {
+        const feedLi = document.createElement('li');
+        feedLi.classList.add('list-group-item', 'border-0', 'border-end-0');
+
+        const h3 = document.createElement('h3');
+        h3.classList.add('h6', 'm-0');
+        feedLi.append(h3);
+        h3.textContent = feed.feedTitle;
+
+        const p = document.createElement('p');
+        p.classList.add('m-0', 'small', 'text-black-50');
+        feedLi.append(p);
+        p.textContent = feed.feedDesc;
+
+        feedUl.appendChild(feedLi);
+        // console.log(feed.feedTitle);
+      });
 
       state.posts.forEach((post) => {
         // console.log(post);

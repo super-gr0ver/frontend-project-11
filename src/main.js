@@ -19,10 +19,11 @@ const state = {
   errors: '',
   rssStatus: '',
   posts: [],
-  feeds: {
-    title: '',
-    description: '',
-  },
+  // feeds: {
+  //   title: '',
+  //   description: '',
+  // },
+  feeds: [],
   requestFreq: {
     length: 10,
     interval: 1,
@@ -35,8 +36,11 @@ const getRss = (url) => axios
     `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
       url,
     )}`,
-
   );
+// .catch(() => {
+//   state.errors = 'error';
+// })
+// .finally(() => setTimeout(getRss, 10000));
 
 const form = document.querySelector('.rss-form');
 const input = document.querySelector('.form-control');
@@ -68,6 +72,7 @@ const isValidInterval = (unit, interval) => {
     case 'day':
       return (interval === 1);
     case 'month':
+      console.log(interval);
       return (interval <= 12) && (12 % interval === 0);
     case 'year':
       return interval === 1;
@@ -101,10 +106,13 @@ const parseRss = (data) => {
   const parse = new DOMParser();
   const doc = parse.parseFromString(data, 'application/xml');
 
-  const feedTitle = doc.querySelector('title');
-  const feedDesc = doc.querySelector('description');
-  state.feeds.title = feedTitle.textContent;
-  state.feeds.description = feedDesc.textContent;
+  const feedTitle = doc.querySelector('title').textContent;
+  const feedDesc = doc.querySelector('description').textContent;
+  // state.feeds.title = feedTitle.textContent;
+  // state.feeds.description = feedDesc.textContent;
+  // console.log(feedTitle, feedDesc);
+
+  state.feeds.push({ feedTitle, feedDesc });
 
   doc.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
@@ -174,13 +182,16 @@ const getInterval = (unit, interval) => {
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+  state.requestFreq.interval = 1;
+
   const formData = new FormData(e.target);
   const currentUrl = formData.get('url').trim();
   state.form.currentUrl = currentUrl;
 
   const requestFreq = new URL(currentUrl);
-  const stringInterval = requestFreq.searchParams.get('interval');
   const unit = requestFreq.searchParams.get('unit');
+
+  const stringInterval = requestFreq.searchParams.get('interval');
   const interval = stringInterval
     ? Number(stringInterval.replace(',', '.'))
     : state.requestFreq.interval;
