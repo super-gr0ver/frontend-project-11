@@ -108,22 +108,22 @@ const parseRss = (data) => {
 
   const feedTitle = doc.querySelector('title').textContent;
   const feedDesc = doc.querySelector('description').textContent;
-  // state.feeds.title = feedTitle.textContent;
-  // state.feeds.description = feedDesc.textContent;
-  // console.log(feedTitle, feedDesc);
 
-  state.feeds.push({ feedTitle, feedDesc });
+  // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
+  // Это чтобы каждый раз при проверке новых постов не добавлялись фиды, которые уже есть
+  const uniqFeedTitle = !state.feeds.find((feed) => feed.feedTitle === feedTitle);
+  console.log(uniqFeedTitle);
+  if (uniqFeedTitle) {
+    state.feeds.unshift({ feedTitle, feedDesc });
+  }
 
   doc.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
     const link = item.querySelector('link');
-    // console.log(title);
 
-    // Проверка, если title нет в состоянии то добавляем
-    const uniqId = !state.posts.find((post) => post.title === title.textContent);
-
-    // console.log(uniqId);
-    if (uniqId) {
+    // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
+    const uniqPostTitle = !state.posts.find((post) => post.title === title.textContent);
+    if (uniqPostTitle) {
       state.posts.push({
         id: Number(_.uniqueId()),
         title: title.textContent,
@@ -208,6 +208,7 @@ form.addEventListener('submit', (e) => {
         return;
       }
       const updateInterval = getInterval(unit, interval);
+      console.log(updateInterval);
       state.requestFreq.interval = updateInterval;
       state.requestFreq.unit = unit;
 
