@@ -58,7 +58,6 @@ const view = (state) => {
       break;
     case 'done':
 
-      console.log(state.feeds);
       feedsHeader.textContent = 'Фиды';
       postsHeader.textContent = 'Посты';
 
@@ -82,7 +81,6 @@ const view = (state) => {
       });
 
       state.posts.forEach((post) => {
-        // console.log(post);
         const button = document.createElement('button');
         const postsLi = document.createElement('li');
         postsLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
@@ -102,9 +100,12 @@ const view = (state) => {
         button.setAttribute('data-id', post.id);
         button.setAttribute('data-bs-toggle', 'modal');
         button.setAttribute('data-bs-target', '#modal');
+        button.addEventListener('click', (e) => console.log(e));
 
         postsUl.appendChild(postsLi);
       });
+
+      // const toogleViewed = () => { };
 
       break;
 

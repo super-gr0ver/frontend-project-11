@@ -29,6 +29,9 @@ const state = {
     interval: 1,
     unit: '',
   },
+  uiState: {
+    viewedPost: { id: true },
+  },
 };
 
 const getRss = (url) => axios
