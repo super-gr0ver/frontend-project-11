@@ -31,8 +31,66 @@ const postsHeader = postsContainer.querySelector('h2');
 // const feedsDesc = feedContainer.querySelector('p');
 
 const view = (state) => {
-  // console.log(state.feeds.title);
+  // console.log(state.processState);
+  const renderPosts = () => {
+    feedUl.innerHTML = '';
+    state.feeds.forEach((feed) => {
+      const feedLi = document.createElement('li');
+      feedLi.classList.add('list-group-item', 'border-0', 'border-end-0');
 
+      const h3 = document.createElement('h3');
+      h3.classList.add('h6', 'm-0');
+      feedLi.append(h3);
+      h3.textContent = feed.feedTitle;
+
+      const p = document.createElement('p');
+      p.classList.add('m-0', 'small', 'text-black-50');
+      feedLi.append(p);
+      p.textContent = feed.feedDesc;
+
+      feedUl.appendChild(feedLi);
+      // console.log(feed.feedTitle);
+    });
+
+    state.posts.forEach((post) => {
+      const button = document.createElement('button');
+      const postsLi = document.createElement('li');
+      postsLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+      const a = document.createElement('a');
+
+      const viewed = state.uiState.viewedPost[post.id - 1] ? 'fw-bold' : 'fw-normal';
+
+      console.log(viewed);
+
+      a.classList.add(viewed);
+      a.setAttribute('href', post.link);
+      a.setAttribute('data-id', post.id);
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      postsLi.append(a);
+      a.textContent = post.title;
+
+      postsLi.append(button);
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+      button.textContent = 'Просмотр';
+      button.setAttribute('type', 'button');
+      button.setAttribute('data-id', post.id);
+      button.setAttribute('data-bs-toggle', 'modal');
+      button.setAttribute('data-bs-target', '#modal');
+      button.addEventListener('click', () => viewedPost(post.id - 1));
+
+      postsUl.appendChild(postsLi);
+    });
+
+    const viewedPost = (id) => {
+      console.log(state.uiState.viewedPost[id]);
+      state.uiState.viewedPost[id].viewd = !state.uiState.viewedPost[id].viewd;
+
+      // Если сделать так как ниже, что все посты из фида еще раз добавятся.
+      // А если не сделать, то не работает измение
+      renderPosts();
+    };
+  };
   switch (state.processState) {
     case 'filling':
       feedback.textContent = '';
@@ -61,56 +119,13 @@ const view = (state) => {
       feedsHeader.textContent = 'Фиды';
       postsHeader.textContent = 'Посты';
 
-      feedUl.innerHTML = '';
-      state.feeds.forEach((feed) => {
-        const feedLi = document.createElement('li');
-        feedLi.classList.add('list-group-item', 'border-0', 'border-end-0');
-
-        const h3 = document.createElement('h3');
-        h3.classList.add('h6', 'm-0');
-        feedLi.append(h3);
-        h3.textContent = feed.feedTitle;
-
-        const p = document.createElement('p');
-        p.classList.add('m-0', 'small', 'text-black-50');
-        feedLi.append(p);
-        p.textContent = feed.feedDesc;
-
-        feedUl.appendChild(feedLi);
-        // console.log(feed.feedTitle);
-      });
-
-      state.posts.forEach((post) => {
-        const button = document.createElement('button');
-        const postsLi = document.createElement('li');
-        postsLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-        const a = document.createElement('a');
-        a.classList.add('fw-bold');
-        a.setAttribute('href', post.link);
-        a.setAttribute('data-id', post.id);
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener noreferrer');
-        postsLi.append(a);
-        a.textContent = post.title;
-
-        postsLi.append(button);
-        button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-        button.textContent = 'Просмотр';
-        button.setAttribute('type', 'button');
-        button.setAttribute('data-id', post.id);
-        button.setAttribute('data-bs-toggle', 'modal');
-        button.setAttribute('data-bs-target', '#modal');
-        button.addEventListener('click', (e) => console.log(e));
-
-        postsUl.appendChild(postsLi);
-      });
-
-      // const toogleViewed = () => { };
-
+      renderPosts();
       break;
 
     default:
       break;
   }
 };
+// const button = document.querySelector('[data-bs-target="#modal"]');
+// console.log(button);
 export default view;

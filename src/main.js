@@ -30,7 +30,8 @@ const state = {
     unit: '',
   },
   uiState: {
-    viewedPost: { id: true },
+    viewedPost: [],
+    // viewedPost: { id: true },
   },
 };
 
@@ -75,7 +76,7 @@ const isValidInterval = (unit, interval) => {
     case 'day':
       return (interval === 1);
     case 'month':
-      console.log(interval);
+      // console.log(interval);
       return (interval <= 12) && (12 % interval === 0);
     case 'year':
       return interval === 1;
@@ -115,7 +116,7 @@ const parseRss = (data) => {
   // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
   // Это чтобы каждый раз при проверке новых постов не добавлялись фиды, которые уже есть
   const uniqFeedTitle = !state.feeds.find((feed) => feed.feedTitle === feedTitle);
-  console.log(uniqFeedTitle);
+  // console.log(uniqFeedTitle);
   if (uniqFeedTitle) {
     state.feeds.unshift({ feedTitle, feedDesc });
   }
@@ -127,11 +128,17 @@ const parseRss = (data) => {
     // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
     const uniqPostTitle = !state.posts.find((post) => post.title === title.textContent);
     if (uniqPostTitle) {
+      const uniqId = Number(_.uniqueId());
       state.posts.push({
-        id: Number(_.uniqueId()),
+        id: uniqId,
         title: title.textContent,
         link: link.textContent,
       });
+      state.uiState.viewedPost.push({
+        id: uniqId,
+        viewd: true,
+      });
+      // console.log(state.uiState.viewedPost);
     }
   });
   watchedObj.processState = 'done';
@@ -211,7 +218,7 @@ form.addEventListener('submit', (e) => {
         return;
       }
       const updateInterval = getInterval(unit, interval);
-      console.log(updateInterval);
+      // console.log(updateInterval);
       state.requestFreq.interval = updateInterval;
       state.requestFreq.unit = unit;
 
