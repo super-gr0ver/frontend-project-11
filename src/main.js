@@ -136,7 +136,7 @@ const parseRss = (data) => {
       });
       state.uiState.viewedPost.push({
         id: uniqId,
-        viewd: true,
+        viewed: true,
       });
       // console.log(state.uiState.viewedPost);
     }

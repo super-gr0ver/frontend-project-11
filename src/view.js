@@ -23,6 +23,7 @@ feedContainer.innerHTML = `
 </div>
 `;
 const feedUl = feedContainer.querySelector('ul');
+const postUl = postsContainer.querySelector('.list-group');
 
 const feedsHeader = feedContainer.querySelector('h2');
 const postsHeader = postsContainer.querySelector('h2');
@@ -32,7 +33,6 @@ const postsHeader = postsContainer.querySelector('h2');
 
 const view = (state) => {
   // console.log(state.processState);
-
   switch (state.processState) {
     case 'filling':
       feedback.textContent = '';
@@ -62,6 +62,8 @@ const view = (state) => {
       postsHeader.textContent = 'Посты';
 
       feedUl.innerHTML = '';
+      postUl.innerHTML = '';
+
       state.feeds.forEach((feed) => {
         const feedLi = document.createElement('li');
         feedLi.classList.add('list-group-item', 'border-0', 'border-end-0');
@@ -86,8 +88,8 @@ const view = (state) => {
         postsLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
         const a = document.createElement('a');
 
-        const viewed = state.uiState.viewedPost[post.id - 1] ? 'fw-bold' : 'fw-normal';
-
+        const viewed = state.uiState.viewedPost[post.id - 1].viewed ? 'fw-bold' : 'fw-normal';
+        // console.log(viewed, state.uiState.viewedPost[post.id - 1].viewed);
         // console.log(viewed);
 
         a.classList.add(viewed);
@@ -110,20 +112,16 @@ const view = (state) => {
         postsUl.appendChild(postsLi);
       });
 
-      const viewedPost = (id) => {
-        console.log(state.uiState.viewedPost[id]);
-        state.uiState.viewedPost[id].viewd = !state.uiState.viewedPost[id].viewd;
-
-        // Если сделать так как ниже, что все посты из фида еще раз добавятся.
-        // А если не сделать, то не работает измение стиля на прочитанных постах
-        // view(state)
-      };
-
       break;
 
     default:
       break;
   }
+  const viewedPost = (id) => {
+    state.uiState.viewedPost[id].viewed = !state.uiState.viewedPost[id].viewed;
+    console.log(state);
+    view(state);
+  };
 };
 // const button = document.querySelector('[data-bs-target="#modal"]');
 // console.log(button);
