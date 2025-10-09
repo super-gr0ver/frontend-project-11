@@ -124,11 +124,12 @@ const parseRss = (data) => {
   doc.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
     const link = item.querySelector('link');
+    console.log(item);
 
-    // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
-    const uniqPostTitle = !state.posts.find((post) => post.title === title.textContent);
-    if (uniqPostTitle) {
-      const uniqId = Number(_.uniqueId());
+    const uniqId = Number(_.uniqueId());
+    const isUniq = !state.posts.find(({ id }) => id === uniqId);
+
+    if (isUniq) {
       state.posts.push({
         id: uniqId,
         title: title.textContent,
@@ -138,7 +139,6 @@ const parseRss = (data) => {
         id: uniqId,
         viewed: true,
       });
-      // console.log(state.uiState.viewedPost);
     }
   });
   watchedObj.processState = 'done';
