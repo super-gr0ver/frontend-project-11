@@ -107,7 +107,18 @@ const view = (state) => {
         button.setAttribute('data-id', post.id);
         button.setAttribute('data-bs-toggle', 'modal');
         button.setAttribute('data-bs-target', '#modal');
-        button.addEventListener('click', () => viewedPost(post.id - 1));
+        button.addEventListener('click', () => {
+          const isViewed = state.uiState.viewedPost[post.id - 1].viewed;
+
+          if (isViewed) {
+            viewedPost(post.id - 1);
+          }
+
+          const modalTitle = document.querySelector('.modal-header');
+          const modalBody = document.querySelector('.modal-body');
+          modalTitle.textContent = post.title;
+          modalBody.textContent = post.desc;
+        });
 
         postsUl.appendChild(postsLi);
       });
@@ -117,9 +128,11 @@ const view = (state) => {
     default:
       break;
   }
-  const viewedPost = (id) => {
-    state.uiState.viewedPost[id].viewed = !state.uiState.viewedPost[id].viewed;
-    console.log(state);
+  const viewedPost = (currentPostId) => {
+    // const isUniqPost = !state.uiState.viewedPost.find(({ id }) => id === currentPostId);
+    // console.log(isUniqPost);
+    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed;
+    // console.log(state);
     view(state);
   };
 };

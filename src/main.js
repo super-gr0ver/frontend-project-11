@@ -124,7 +124,8 @@ const parseRss = (data) => {
   doc.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
     const link = item.querySelector('link');
-    console.log(item);
+    const desc = item.querySelector('description');
+    // console.log(item);
 
     const uniqId = Number(_.uniqueId());
     const isUniq = !state.posts.find(({ id }) => id === uniqId);
@@ -133,6 +134,7 @@ const parseRss = (data) => {
       state.posts.push({
         id: uniqId,
         title: title.textContent,
+        desc: desc.textContent,
         link: link.textContent,
       });
       state.uiState.viewedPost.push({
