@@ -84,7 +84,7 @@ const isValidInterval = (unit, interval) => {
     case null:
       return interval === state.requestFreq.interval;
     default:
-      return false;
+      return true;
   }
 };
 
