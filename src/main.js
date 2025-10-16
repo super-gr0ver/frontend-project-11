@@ -68,6 +68,7 @@ yup.setLocale({
 run();
 
 const isValidInterval = (unit, interval) => {
+  console.log(unit, interval);
   switch (unit) {
     case 'second':
       return (interval <= 60) && (60 % interval === 0);
@@ -80,6 +81,8 @@ const isValidInterval = (unit, interval) => {
       return (interval <= 12) && (12 % interval === 0);
     case 'year':
       return interval === 1;
+    case null:
+      return interval === state.requestFreq.interval;
     default:
       return false;
   }
