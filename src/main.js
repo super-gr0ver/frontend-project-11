@@ -67,8 +67,12 @@ yup.setLocale({
 });
 run();
 
+const isRSS = () => {
+
+};
+
 const isValidInterval = (unit, interval) => {
-  console.log(unit, interval);
+  // console.log(unit, interval);
   switch (unit) {
     case 'second':
       return (interval <= 60) && (60 % interval === 0);
@@ -95,8 +99,8 @@ const getSchema = (urls, unit, interval) => yup.object().shape({
     .trim()
     .notOneOf(urls)
     .required()
+    .test('isRSS', i18nextInstance.t('rssStatus.error'), () => isRSS() === true)
     .test('checkInterval', 'Не верный интервал обновления', () => isValidInterval(unit, interval) === true),
-
 });
 
 const validate = (currentUrl, urls, unit, interval) => {
@@ -112,6 +116,14 @@ const watchedObj = onChange(state, () => view(state));
 const parseRss = (data) => {
   const parse = new DOMParser();
   const doc = parse.parseFromString(data, 'application/xml');
+  const isRss = doc.querySelector('rss');
+
+  console.log(isRss);
+  if (!isRss) {
+    watchedObj.errors = 'error';
+    watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
+    return;
+  }
 
   const feedTitle = doc.querySelector('title').textContent;
   const feedDesc = doc.querySelector('description').textContent;
