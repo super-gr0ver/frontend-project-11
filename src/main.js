@@ -67,10 +67,6 @@ yup.setLocale({
 });
 run();
 
-const isRSS = () => {
-
-};
-
 const isValidInterval = (unit, interval) => {
   // console.log(unit, interval);
   switch (unit) {
@@ -99,7 +95,7 @@ const getSchema = (urls, unit, interval) => yup.object().shape({
     .trim()
     .notOneOf(urls)
     .required()
-    .test('isRSS', i18nextInstance.t('rssStatus.error'), () => isRSS() === true)
+    // .test('isRSS', i18nextInstance.t('rssStatus.error'), () => isRSS() === true)
     .test('checkInterval', 'Не верный интервал обновления', () => isValidInterval(unit, interval) === true),
 });
 
@@ -114,19 +110,20 @@ const validate = (currentUrl, urls, unit, interval) => {
 const watchedObj = onChange(state, () => view(state));
 
 const parseRss = (data) => {
-  const parse = new DOMParser();
-  const doc = parse.parseFromString(data, 'application/xml');
-  const isRss = doc.querySelector('rss');
+  // const parse = new DOMParser();
+  // const doc = parse.parseFromString(data, 'application/xml');
+  // const isRss = doc.querySelector('rss');
 
-  console.log(isRss);
-  if (!isRss) {
-    watchedObj.errors = 'error';
-    watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
-    return;
-  }
+  // console.log(!isRss);
+  // if (!isRss) {
+  //   watchedObj.processState.errors = 'error';
+  //   watchedObj.errors = i18nextInstance.t('rssStatus.error');
+  //   console.log(state.errors, state.rssStatus);
+  //   return;
+  // }
 
-  const feedTitle = doc.querySelector('title').textContent;
-  const feedDesc = doc.querySelector('description').textContent;
+  const feedTitle = data.querySelector('title').textContent;
+  const feedDesc = data.querySelector('description').textContent;
 
   // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
   // Это чтобы каждый раз при проверке новых постов не добавлялись фиды, которые уже есть
@@ -136,7 +133,7 @@ const parseRss = (data) => {
     state.feeds.unshift({ feedTitle, feedDesc });
   }
 
-  doc.querySelectorAll('item').forEach((item) => {
+  data.querySelectorAll('item').forEach((item) => {
     const title = item.querySelector('title');
     const link = item.querySelector('link');
     const desc = item.querySelector('description');
@@ -169,16 +166,26 @@ input.addEventListener('input', () => {
 const updateRss = (url) => {
   getRss(url)
     .then((flow) => {
-      if (flow.data.contents) {
-        parseRss(flow.data.contents);
-        watchedObj.errors = '';
-        watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      const { contents } = flow.data;
+      const parse = new DOMParser();
+      const doc = parse.parseFromString(contents, 'application/xml');
+      const isRss = doc.querySelector('rss');
 
-        // if (!state.urls.includes(url)) {
-        //   watchedObj.urls.push(url);
-        // }
-        // watchedObj.processState = 'processed';
+      if (!isRss) {
+        watchedObj.processState = 'error';
+        watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
+        return;
       }
+
+      parseRss(doc);
+      // watchedObj.errors = '';
+      // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+
+      watchedObj.errors = '';
+      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      watchedObj.urls.push(url);
+      watchedObj.processState = 'processed';
+
       setTimeout(updateRss, state.requestFreq.interval, url);
     })
 
@@ -240,10 +247,10 @@ form.addEventListener('submit', (e) => {
       state.requestFreq.unit = unit;
 
       updateRss(currentUrl);
-      watchedObj.errors = '';
-      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
-      watchedObj.urls.push(currentUrl);
-      watchedObj.processState = 'processed';
+      // watchedObj.errors = '';
+      // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      // watchedObj.urls.push(currentUrl);
+      // watchedObj.processState = 'processed';
     });
 
   // const params = getRequestFreq(url);
