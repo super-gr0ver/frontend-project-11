@@ -48,9 +48,11 @@ const view = (state) => {
       input.focus();
       break;
     case 'error':
-      console.log(state.rssStatus);
+      // console.log(state.errors);
       input.value = state.form.currentUrl;
-      feedback.textContent = state.rssStatus;
+      // feedback.textContent = state.rssStatus;
+      feedback.textContent = state.errors;
+
       feedback.classList.remove('text-success');
       feedback.classList.add('text-danger');
       input.classList.add('is-invalid');

@@ -141,6 +141,7 @@ const parseRss = (data) => {
 
     const uniqId = Number(_.uniqueId());
     const isUniq = !state.posts.find(({ id }) => id === uniqId);
+    // console.log(isUniq);
 
     if (isUniq) {
       state.posts.push({
@@ -173,7 +174,9 @@ const updateRss = (url) => {
 
       if (!isRss) {
         watchedObj.processState = 'error';
+        watchedObj.errors = '';
         watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
+
         return;
       }
 
@@ -238,6 +241,7 @@ form.addEventListener('submit', (e) => {
     .then((error) => {
       if (Object.keys(error).length !== 0) {
         state.errors = error.currentUrl?.message || 'err';
+        // console.log(state.errors);
         watchedObj.processState = 'error';
         return;
       }
