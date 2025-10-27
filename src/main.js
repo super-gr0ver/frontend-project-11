@@ -174,7 +174,7 @@ const updateRss = (url) => {
 
       if (!isRss) {
         watchedObj.processState = 'error';
-        // watchedObj.errors = '';
+        watchedObj.errors = '';
         watchedObj.errors = i18nextInstance.t('rssStatus.error');
         // watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
 
