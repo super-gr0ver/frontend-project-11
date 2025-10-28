@@ -50,8 +50,8 @@ const view = (state) => {
     case "error":
       console.log(state.rssStatus);
       input.value = state.form.currentUrl;
-      // feedback.textContent = state.rssStatus;
-      feedback.textContent = state.errors;
+      feedback.textContent = state.rssStatus;
+      // feedback.textContent = state.errors;
 
       feedback.classList.remove("text-success");
       feedback.classList.add("text-danger");

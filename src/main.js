@@ -247,7 +247,7 @@ form.addEventListener("submit", (e) => {
 
   validate({ currentUrl }, state.urls, unit, interval).then((error) => {
     if (Object.keys(error).length !== 0) {
-      watchedObj.errors = error.currentUrl?.message || "err";
+      state.errors = error.currentUrl?.message || "err";
       // console.log(state.errors);
       watchedObj.processState = "error";
       return;
