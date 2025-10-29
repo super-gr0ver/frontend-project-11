@@ -40,7 +40,7 @@ const view = (state) => {
       addUrlBtn.disabled = false;
       break;
     case 'processed':
-      // input.value = '';
+      input.value = '';
       feedback.textContent = state.rssStatus;
       feedback.classList.remove('text-danger');
       input.classList.remove('is-invalid');
@@ -48,10 +48,10 @@ const view = (state) => {
       input.focus();
       break;
     case 'error':
-      console.log(state.rssStatus);
+      // console.log(state.rssStatus);
       input.value = state.form.currentUrl;
-      feedback.textContent = state.rssStatus;
-      // feedback.textContent = state.errors;
+      // feedback.textContent = state.rssStatus;
+      feedback.textContent = state.errors;
 
       feedback.classList.remove('text-success');
       feedback.classList.add('text-danger');
@@ -60,7 +60,7 @@ const view = (state) => {
       input.focus();
       break;
     case 'done':
-      input.value = '';
+      // input.value = '';
       feedsHeader.textContent = 'Фиды';
       postsHeader.textContent = 'Посты';
 

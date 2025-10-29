@@ -131,9 +131,6 @@ const parseRss = (data) => {
   // console.log(uniqFeedTitle);
   if (uniqFeedTitle) {
     state.feeds.unshift({ feedTitle, feedDesc });
-  } else {
-    // console.log(state.errors);
-    // return;
   }
 
   data.querySelectorAll('item').forEach((item) => {
@@ -183,10 +180,10 @@ const updateRss = (url) => {
       }
 
       parseRss(doc);
-      watchedObj.errors = '';
-      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      // watchedObj.errors = '';
+      // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
       watchedObj.urls.push(url);
-      watchedObj.processState = 'processed';
+      // watchedObj.processState = 'processed';
 
       setTimeout(updateRss, state.requestFreq.interval, url);
     })
@@ -222,6 +219,8 @@ form.addEventListener('submit', (e) => {
   const currentUrl = formData.get('url').trim();
   state.form.currentUrl = currentUrl;
 
+  watchedObj.processState = 'processed';
+
   const requestFreq = new URL(currentUrl);
   const unit = requestFreq.searchParams.get('unit');
 
@@ -242,6 +241,11 @@ form.addEventListener('submit', (e) => {
       state.requestFreq.unit = unit;
 
       updateRss(currentUrl);
+
+      watchedObj.errors = '';
+      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+      watchedObj.processState = 'processed';
+
       // watchedObj.errors = '';
       // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
       // watchedObj.urls.push(currentUrl);
