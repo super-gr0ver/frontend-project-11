@@ -34,20 +34,6 @@ const state = {
     // viewedPost: { id: true },
   },
 };
-
-const getRss = (url) => axios.get(
-  `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-    url,
-  )}`,
-);
-// .catch(() => {
-//   state.errors = 'error';
-// })
-// .finally(() => setTimeout(getRss, 10000));
-
-const form = document.querySelector('.rss-form');
-const input = document.querySelector('.form-control');
-
 const i18nextInstance = i18n.createInstance();
 const run = async () => {
   await i18nextInstance.init({
@@ -55,6 +41,21 @@ const run = async () => {
     resources,
   });
 };
+const watchedObj = onChange(state, () => view(state));
+
+const getRss = (url) => axios.get(
+  `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+    url,
+  )}`,
+)
+  .catch(() => {
+    state.errors = i18nextInstance.t('rssStatus.networkError');
+    watchedObj.processState = 'error';
+  });
+// .finally(() => setTimeout(getRss, 10000));
+
+const form = document.querySelector('.rss-form');
+const input = document.querySelector('.form-control');
 
 yup.setLocale({
   string: {
@@ -109,8 +110,6 @@ const validate = (currentUrl, urls, unit, interval) => {
     .then(() => ({}))
     .catch((e) => _.keyBy(e.inner, 'path'));
 };
-
-const watchedObj = onChange(state, () => view(state));
 
 const parseRss = (data) => {
   // const parse = new DOMParser();
@@ -201,8 +200,12 @@ const updateRss = (url) => {
     })
 
     .catch((error) => {
+      // console.log('NET ERR');
+      // watchedObj.processState = 'error';
+      // watchedObj.errors = error.response;
+
+      state.errors = i18nextInstance.t('rssStatus.networkError');
       watchedObj.processState = 'error';
-      watchedObj.errors = error.response;
     });
 };
 
@@ -234,7 +237,6 @@ form.addEventListener('submit', (e) => {
   state.form.currentUrl = currentUrl;
   const isUrl = (currentUrl) => {
     try {
-      // new URL(currentUrl);
       return new URL(currentUrl);
     } catch {
       state.errors = i18nextInstance.t('formErrors.url');
