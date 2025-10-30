@@ -3,7 +3,6 @@ import * as yup from 'yup';
 import * as _ from 'lodash';
 import i18n from 'i18next';
 import axios from 'axios';
-// import uniqueId from 'lodash/uniqueId.js';
 import view from './view.js';
 
 import resources from './locales/ru.js';
@@ -19,10 +18,6 @@ const state = {
   errors: '',
   rssStatus: '',
   posts: [],
-  // feeds: {
-  //   title: '',
-  //   description: '',
-  // },
   feeds: [],
   requestFreq: {
     length: 10,
@@ -31,7 +26,6 @@ const state = {
   },
   uiState: {
     viewedPost: [],
-    // viewedPost: { id: true },
   },
 };
 const i18nextInstance = i18n.createInstance();
@@ -52,7 +46,6 @@ const getRss = (url) => axios.get(
     state.errors = i18nextInstance.t('rssStatus.networkError');
     watchedObj.processState = 'error';
   });
-// .finally(() => setTimeout(getRss, 10000));
 
 const form = document.querySelector('.rss-form');
 const input = document.querySelector('.form-control');
@@ -68,7 +61,6 @@ yup.setLocale({
 run();
 
 const isValidInterval = (unit, interval) => {
-  // console.log(unit, interval);
   switch (unit) {
     case 'second':
       return interval <= 60 && 60 % interval === 0;
@@ -95,7 +87,6 @@ const getSchema = (urls, unit, interval) => yup.object().shape({
     .trim()
     .required()
     .notOneOf(urls)
-    // .test('isRSS', i18nextInstance.t('rssStatus.error'), () => isRSS() === true)
     .test(
       'checkInterval',
       'Не верный интервал обновления',
@@ -112,27 +103,13 @@ const validate = (currentUrl, urls, unit, interval) => {
 };
 
 const parseRss = (data) => {
-  // const parse = new DOMParser();
-  // const doc = parse.parseFromString(data, 'application/xml');
-  // const isRss = doc.querySelector('rss');
-
-  // console.log(!isRss);
-  // if (!isRss) {
-  //   watchedObj.processState.errors = 'error';
-  //   watchedObj.errors = i18nextInstance.t('rssStatus.error');
-  //   console.log(state.errors, state.rssStatus);
-  //   return;
-  // }
-
   const feedTitle = data.querySelector('title').textContent;
   const feedDesc = data.querySelector('description').textContent;
 
-  // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
-  // Это чтобы каждый раз при проверке новых постов не добавлялись фиды, которые уже есть
   const uniqFeedTitle = !state.feeds.find(
     (feed) => feed.feedTitle === feedTitle,
   );
-  // console.log(uniqFeedTitle);
+
   if (uniqFeedTitle) {
     state.feeds.unshift({ feedTitle, feedDesc });
   }
@@ -172,38 +149,26 @@ const updateRss = (url) => {
       if (state.processState === 'error') {
         return;
       }
-
-      // watchedObj.processState = state.processState
       const { contents } = flow.data;
       const parse = new DOMParser();
       const doc = parse.parseFromString(contents, 'application/xml');
       const isRss = doc.querySelector('rss');
-      // console.log(!isRss);
 
       if (!isRss) {
-        // console.log(state.processState)
         watchedObj.processState = 'error';
         watchedObj.errors = '';
         watchedObj.errors = i18nextInstance.t('rssStatus.error');
-        // watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
 
         return;
       }
 
       parseRss(doc);
-      // watchedObj.errors = '';
-      // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
       watchedObj.urls.push(url);
-      // watchedObj.processState = 'processed';
 
       setTimeout(updateRss, state.requestFreq.interval, url);
     })
 
-    .catch((error) => {
-      // console.log('NET ERR');
-      // watchedObj.processState = 'error';
-      // watchedObj.errors = error.response;
-
+    .catch(() => {
       state.errors = i18nextInstance.t('rssStatus.networkError');
       watchedObj.processState = 'error';
     });
@@ -232,7 +197,6 @@ form.addEventListener('submit', (e) => {
 
   const formData = new FormData(e.target);
   const currentUrl = formData.get('url').trim();
-  // console.log(currentUrl);
 
   state.form.currentUrl = currentUrl;
   const isUrl = (currentUrl) => {
