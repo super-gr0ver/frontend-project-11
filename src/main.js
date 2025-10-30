@@ -29,14 +29,14 @@ const state = {
     viewedPost: [],
   },
 }
-const i18nextInstance = i18n.createInstance();
+const i18nextInstance = i18n.createInstance()
 const run = async () => {
   await i18nextInstance.init({
     lng: state.lang,
     resources,
-  });
+  })
 }
-const watchedObj = onChange(state, () => view(state));
+const watchedObj = onChange(state, () => view(state))
 
 const getRss = (url) => axios.get(
   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
@@ -44,12 +44,12 @@ const getRss = (url) => axios.get(
   )}`,
 )
   .catch(() => {
-    state.errors = i18nextInstance.t('rssStatus.networkError');
-    watchedObj.processState = 'error';
-  });
+    state.errors = i18nextInstance.t('rssStatus.networkError')
+    watchedObj.processState = 'error'
+  })
 
-const form = document.querySelector('.rss-form');
-const input = document.querySelector('.form-control');
+const form = document.querySelector('.rss-form')
+const input = document.querySelector('.form-control')
 
 yup.setLocale({
   string: {
@@ -58,28 +58,28 @@ yup.setLocale({
   mixed: {
     notOneOf: () => i18nextInstance.t('formErrors.exist'),
   },
-});
-run();
+})
+run()
 
 const isValidInterval = (unit, interval) => {
   switch (unit) {
     case 'second':
-      return interval <= 60 && 60 % interval === 0;
+      return interval <= 60 && 60 % interval === 0
     case 'minute':
-      return interval <= 60 && 60 % interval === 0;
+      return interval <= 60 && 60 % interval === 0
     case 'day':
-      return interval === 1;
+      return interval === 1
     case 'month':
-      // console.log(interval);
-      return interval <= 12 && 12 % interval === 0;
+      // console.log(interval)
+      return interval <= 12 && 12 % interval === 0
     case 'year':
-      return interval === 1;
+      return interval === 1
     case null:
-      return interval === state.requestFreq.interval;
+      return interval === state.requestFreq.interval
     default:
-      return false;
+      return false
   }
-};
+}
 
 const getSchema = (urls, unit, interval) => yup.object().shape({
   currentUrl: yup
@@ -93,35 +93,35 @@ const getSchema = (urls, unit, interval) => yup.object().shape({
       'Не верный интервал обновления',
       () => isValidInterval(unit, interval) === true,
     ),
-});
+})
 
 const validate = (currentUrl, urls, unit, interval) => {
-  const schema = getSchema(urls, unit, interval);
+  const schema = getSchema(urls, unit, interval)
   return schema
     .validate(currentUrl, { abortEarly: false })
     .then(() => ({}))
-    .catch((e) => _.keyBy(e.inner, 'path'));
-};
+    .catch((e) => _.keyBy(e.inner, 'path'))
+}
 
 const parseRss = (data) => {
-  const feedTitle = data.querySelector('title').textContent;
-  const feedDesc = data.querySelector('description').textContent;
+  const feedTitle = data.querySelector('title').textContent
+  const feedDesc = data.querySelector('description').textContent
 
   const uniqFeedTitle = !state.feeds.find(
     (feed) => feed.feedTitle === feedTitle,
-  );
+  )
 
   if (uniqFeedTitle) {
-    state.feeds.unshift({ feedTitle, feedDesc });
+    state.feeds.unshift({ feedTitle, feedDesc })
   }
 
   data.querySelectorAll('item').forEach((item) => {
-    const title = item.querySelector('title');
-    const link = item.querySelector('link');
-    const desc = item.querySelector('description');
+    const title = item.querySelector('title')
+    const link = item.querySelector('link')
+    const desc = item.querySelector('description')
 
-    const uniqId = Number(_.uniqueId());
-    const isUniq = !state.posts.find(({ id }) => id === uniqId);
+    const uniqId = Number(_.uniqueId())
+    const isUniq = !state.posts.find(({ id }) => id === uniqId)
 
     if (isUniq) {
       state.posts.push({
@@ -129,110 +129,110 @@ const parseRss = (data) => {
         title: title.textContent,
         desc: desc.textContent,
         link: link.textContent,
-      });
+      })
       state.uiState.viewedPost.push({
         id: uniqId,
         viewed: true,
-      });
+      })
     }
-  });
-  watchedObj.processState = 'done';
-};
+  })
+  watchedObj.processState = 'done'
+}
 
 input.addEventListener('input', () => {
-  watchedObj.processState = 'filling';
-  watchedObj.errors = '';
-});
+  watchedObj.processState = 'filling'
+  watchedObj.errors = ''
+})
 
 const updateRss = (url) => {
   getRss(url)
     .then((flow) => {
       if (state.processState === 'error') {
-        return;
+        return
       }
-      const { contents } = flow.data;
-      const parse = new DOMParser();
-      const doc = parse.parseFromString(contents, 'application/xml');
-      const isRss = doc.querySelector('rss');
+      const { contents } = flow.data
+      const parse = new DOMParser()
+      const doc = parse.parseFromString(contents, 'application/xml')
+      const isRss = doc.querySelector('rss')
 
       if (!isRss) {
-        watchedObj.processState = 'error';
-        watchedObj.errors = '';
-        watchedObj.errors = i18nextInstance.t('rssStatus.error');
+        watchedObj.processState = 'error'
+        watchedObj.errors = ''
+        watchedObj.errors = i18nextInstance.t('rssStatus.error')
 
-        return;
+        return
       }
 
-      parseRss(doc);
-      watchedObj.urls.push(url);
+      parseRss(doc)
+      watchedObj.urls.push(url)
 
-      setTimeout(updateRss, state.requestFreq.interval, url);
+      setTimeout(updateRss, state.requestFreq.interval, url)
     })
 
     .catch(() => {
-      state.errors = i18nextInstance.t('rssStatus.networkError');
-      watchedObj.processState = 'error';
-    });
-};
+      state.errors = i18nextInstance.t('rssStatus.networkError')
+      watchedObj.processState = 'error'
+    })
+}
 
 const getInterval = (unit, interval) => {
   switch (unit) {
     case 'second':
-      return interval * 1000;
+      return interval * 1000
     case 'minute':
-      return interval * 60000;
+      return interval * 60000
     case 'day':
-      return interval * 86400000;
+      return interval * 86400000
     case 'month':
-      return interval * 2147483647;
+      return interval * 2147483647
     case 'year':
-      return interval * 31536000000;
+      return interval * 31536000000
     default:
-      return 1000;
+      return 1000
   }
-};
+}
 
 form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  state.requestFreq.interval = 1000;
+  e.preventDefault()
+  state.requestFreq.interval = 1000
 
-  const formData = new FormData(e.target);
-  const currentUrl = formData.get('url').trim();
+  const formData = new FormData(e.target)
+  const currentUrl = formData.get('url').trim()
 
-  state.form.currentUrl = currentUrl;
+  state.form.currentUrl = currentUrl
   const isUrl = (currentUrl) => {
     try {
-      return new URL(currentUrl);
+      return new URL(currentUrl)
     } catch {
-      state.errors = i18nextInstance.t('formErrors.url');
-      watchedObj.processState = 'error';
+      state.errors = i18nextInstance.t('formErrors.url')
+      watchedObj.processState = 'error'
     }
-  };
-  if (!isUrl(currentUrl)) {
-    return;
   }
-  const requestFreq = isUrl(currentUrl);
-  const unit = requestFreq.searchParams.get('unit');
+  if (!isUrl(currentUrl)) {
+    return
+  }
+  const requestFreq = isUrl(currentUrl)
+  const unit = requestFreq.searchParams.get('unit')
 
-  const stringInterval = requestFreq.searchParams.get('interval');
+  const stringInterval = requestFreq.searchParams.get('interval')
   const interval = stringInterval
     ? Number(stringInterval.replace(',', '.'))
-    : state.requestFreq.interval;
+    : state.requestFreq.interval
 
   validate({ currentUrl }, state.urls, unit, interval).then((error) => {
     if (Object.keys(error).length !== 0) {
-      state.errors = error.currentUrl?.message || 'err';
-      watchedObj.processState = 'error';
-      return;
+      state.errors = error.currentUrl?.message || 'err'
+      watchedObj.processState = 'error'
+      return
     }
-    const updateInterval = getInterval(unit, interval);
-    state.requestFreq.interval = updateInterval;
-    state.requestFreq.unit = unit;
+    const updateInterval = getInterval(unit, interval)
+    state.requestFreq.interval = updateInterval
+    state.requestFreq.unit = unit
 
-    updateRss(currentUrl);
+    updateRss(currentUrl)
 
-    watchedObj.errors = '';
-    watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
-    watchedObj.processState = 'processed';
-  });
-});
+    watchedObj.errors = ''
+    watchedObj.rssStatus = i18nextInstance.t('rssStatus.done')
+    watchedObj.processState = 'processed'
+  })
+})

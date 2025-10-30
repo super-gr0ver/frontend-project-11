@@ -32,54 +32,54 @@ const postsHeader = postsContainer.querySelector('h2')
 const view = (state) => {
   switch (state.processState) {
     case 'filling':
-      input.classList.remove('is-invalid');
-      addUrlBtn.disabled = false;
-      break;
+      input.classList.remove('is-invalid')
+      addUrlBtn.disabled = false
+      break
     case 'processed':
-      input.value = '';
-      feedback.textContent = '';
-      feedback.classList.remove('text-danger');
-      input.classList.remove('is-invalid');
-      feedback.classList.add('text-success');
-      input.focus();
-      break;
+      input.value = ''
+      feedback.textContent = ''
+      feedback.classList.remove('text-danger')
+      input.classList.remove('is-invalid')
+      feedback.classList.add('text-success')
+      input.focus()
+      break
     case 'error':
-      input.value = state.form.currentUrl;
-      feedback.textContent = state.errors;
-      feedback.classList.remove('text-success');
-      feedback.classList.add('text-danger');
-      input.classList.add('is-invalid');
-      addUrlBtn.disabled = true;
-      input.focus();
-      break;
+      input.value = state.form.currentUrl
+      feedback.textContent = state.errors
+      feedback.classList.remove('text-success')
+      feedback.classList.add('text-danger')
+      input.classList.add('is-invalid')
+      addUrlBtn.disabled = true
+      input.focus()
+      break
     case 'done':
-      feedback.textContent = state.rssStatus;
-      feedsHeader.textContent = 'Фиды';
-      postsHeader.textContent = 'Посты';
+      feedback.textContent = state.rssStatus
+      feedsHeader.textContent = 'Фиды'
+      postsHeader.textContent = 'Посты'
 
-      feedUl.innerHTML = '';
-      postUl.innerHTML = '';
+      feedUl.innerHTML = ''
+      postUl.innerHTML = ''
 
       state.feeds.forEach((feed) => {
-        const feedLi = document.createElement('li');
-        feedLi.classList.add('list-group-item', 'border-0', 'border-end-0');
+        const feedLi = document.createElement('li')
+        feedLi.classList.add('list-group-item', 'border-0', 'border-end-0')
 
-        const h3 = document.createElement('h3');
-        h3.classList.add('h6', 'm-0');
-        feedLi.append(h3);
-        h3.textContent = feed.feedTitle;
+        const h3 = document.createElement('h3')
+        h3.classList.add('h6', 'm-0')
+        feedLi.append(h3)
+        h3.textContent = feed.feedTitle
 
-        const p = document.createElement('p');
-        p.classList.add('m-0', 'small', 'text-black-50');
-        feedLi.append(p);
-        p.textContent = feed.feedDesc;
+        const p = document.createElement('p')
+        p.classList.add('m-0', 'small', 'text-black-50')
+        feedLi.append(p)
+        p.textContent = feed.feedDesc
 
-        feedUl.appendChild(feedLi);
-      });
+        feedUl.appendChild(feedLi)
+      })
 
       state.posts.forEach((post) => {
-        const button = document.createElement('button');
-        const postsLi = document.createElement('li');
+        const button = document.createElement('button')
+        const postsLi = document.createElement('li')
         postsLi.classList.add(
           'list-group-item',
           'd-flex',
@@ -87,52 +87,52 @@ const view = (state) => {
           'align-items-start',
           'border-0',
           'border-end-0',
-        );
-        const a = document.createElement('a');
+        )
+        const a = document.createElement('a')
 
         const viewed = state.uiState.viewedPost[post.id - 1].viewed
           ? 'fw-bold'
-          : 'fw-normal';
+          : 'fw-normal'
 
-        a.classList.add(viewed);
-        a.setAttribute('href', post.link);
-        a.setAttribute('data-id', post.id);
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener noreferrer');
-        postsLi.append(a);
-        a.textContent = post.title;
+        a.classList.add(viewed)
+        a.setAttribute('href', post.link)
+        a.setAttribute('data-id', post.id)
+        a.setAttribute('target', '_blank')
+        a.setAttribute('rel', 'noopener noreferrer')
+        postsLi.append(a)
+        a.textContent = post.title
 
-        postsLi.append(button);
-        button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-        button.textContent = 'Просмотр';
-        button.setAttribute('type', 'button');
-        button.setAttribute('data-id', post.id);
-        button.setAttribute('data-bs-toggle', 'modal');
-        button.setAttribute('data-bs-target', '#modal');
+        postsLi.append(button)
+        button.classList.add('btn', 'btn-outline-primary', 'btn-sm')
+        button.textContent = 'Просмотр'
+        button.setAttribute('type', 'button')
+        button.setAttribute('data-id', post.id)
+        button.setAttribute('data-bs-toggle', 'modal')
+        button.setAttribute('data-bs-target', '#modal')
         button.addEventListener('click', () => {
-          const isViewed = state.uiState.viewedPost[post.id - 1].viewed;
+          const isViewed = state.uiState.viewedPost[post.id - 1].viewed
 
           if (isViewed) {
-            viewedPost(post.id - 1);
+            viewedPost(post.id - 1)
           }
 
-          const modalTitle = document.querySelector('.modal-header');
-          const modalBody = document.querySelector('.modal-body');
-          modalTitle.textContent = post.title;
-          modalBody.textContent = post.desc;
-        });
+          const modalTitle = document.querySelector('.modal-header')
+          const modalBody = document.querySelector('.modal-body')
+          modalTitle.textContent = post.title
+          modalBody.textContent = post.desc
+        })
 
-        postsUl.appendChild(postsLi);
-      });
+        postsUl.appendChild(postsLi)
+      })
 
-      break;
+      break
 
     default:
-      break;
+      break
   }
   const viewedPost = (currentPostId) => {
-    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed;
-    view(state);
-  };
-};
-export default view;
+    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed
+    view(state)
+  }
+}
+export default view
