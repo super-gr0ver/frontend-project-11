@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 /* eslint-disable semi */
 import onChange from 'on-change'
 import * as yup from 'yup'
@@ -38,7 +39,7 @@ const run = async () => {
 }
 const watchedObj = onChange(state, () => view(state))
 
-const getRss = (url) => axios.get(
+const getRss = url => axios.get(
   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
     url,
   )}`,
@@ -100,7 +101,7 @@ const validate = (currentUrl, urls, unit, interval) => {
   return schema
     .validate(currentUrl, { abortEarly: false })
     .then(() => ({}))
-    .catch((e) => _.keyBy(e.inner, 'path'))
+    .catch(e => _.keyBy(e.inner, 'path'))
 }
 
 const parseRss = (data) => {
@@ -108,7 +109,7 @@ const parseRss = (data) => {
   const feedDesc = data.querySelector('description').textContent
 
   const uniqFeedTitle = !state.feeds.find(
-    (feed) => feed.feedTitle === feedTitle,
+    feed => feed.feedTitle === feedTitle,
   )
 
   if (uniqFeedTitle) {
@@ -200,7 +201,7 @@ form.addEventListener('submit', (e) => {
   const currentUrl = formData.get('url').trim()
 
   state.form.currentUrl = currentUrl
-  const isUrl = (currentUrl) => {
+  const isUrl = currentUrl => {
     try {
       return new URL(currentUrl)
     } catch {
