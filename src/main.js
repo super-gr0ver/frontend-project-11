@@ -1,12 +1,13 @@
-import onChange from 'on-change';
-import * as yup from 'yup';
-import * as _ from 'lodash';
-import i18n from 'i18next';
-import axios from 'axios';
-import view from './view.js';
+/* eslint-disable semi */
+import onChange from 'on-change'
+import * as yup from 'yup'
+import * as _ from 'lodash'
+import i18n from 'i18next'
+import axios from 'axios'
+import view from './view.js'
 
-import resources from './locales/ru.js';
-import './style.css';
+import resources from './locales/ru.js'
+import './style.css'
 
 const state = {
   lang: 'ru',
@@ -27,14 +28,14 @@ const state = {
   uiState: {
     viewedPost: [],
   },
-};
+}
 const i18nextInstance = i18n.createInstance();
 const run = async () => {
   await i18nextInstance.init({
     lng: state.lang,
     resources,
   });
-};
+}
 const watchedObj = onChange(state, () => view(state));
 
 const getRss = (url) => axios.get(

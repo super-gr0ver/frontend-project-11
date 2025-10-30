@@ -1,8 +1,9 @@
-const input = document.querySelector('.form-control');
-const feedback = document.querySelector('.feedback');
-const addUrlBtn = document.querySelector('[type="submit"]');
-const postsContainer = document.querySelector('.posts');
-const feedContainer = document.querySelector('.feeds');
+/* eslint-disable semi */
+const input = document.querySelector('.form-control')
+const feedback = document.querySelector('.feedback')
+const addUrlBtn = document.querySelector('[type="submit"]')
+const postsContainer = document.querySelector('.posts')
+const feedContainer = document.querySelector('.feeds')
 
 postsContainer.innerHTML = `
 <div class='card border-0'>
@@ -11,8 +12,8 @@ postsContainer.innerHTML = `
   </div>
   <ul class='list-group border-0 rounded-0'></ul>
 </div>
-`;
-const postsUl = postsContainer.querySelector('ul');
+`
+const postsUl = postsContainer.querySelector('ul')
 
 feedContainer.innerHTML = `
 <div class='card border-0'>
@@ -21,39 +22,30 @@ feedContainer.innerHTML = `
   </div>
   <ul class='list-group border-0 rounded-0'></ul>
 </div>
-`;
-const feedUl = feedContainer.querySelector('ul');
-const postUl = postsContainer.querySelector('.list-group');
+`
+const feedUl = feedContainer.querySelector('ul')
+const postUl = postsContainer.querySelector('.list-group')
 
-const feedsHeader = feedContainer.querySelector('h2');
-const postsHeader = postsContainer.querySelector('h2');
-
-// const feedsTitle = feedContainer.querySelector('h3');
-// const feedsDesc = feedContainer.querySelector('p');
+const feedsHeader = feedContainer.querySelector('h2')
+const postsHeader = postsContainer.querySelector('h2')
 
 const view = (state) => {
-  // console.log(state.processState);
   switch (state.processState) {
     case 'filling':
-      // feedback.textContent = '';
       input.classList.remove('is-invalid');
       addUrlBtn.disabled = false;
       break;
     case 'processed':
       input.value = '';
       feedback.textContent = '';
-      // feedback.textContent = state.rssStatus;
       feedback.classList.remove('text-danger');
       input.classList.remove('is-invalid');
       feedback.classList.add('text-success');
       input.focus();
       break;
     case 'error':
-      // console.log(state.rssStatus);
       input.value = state.form.currentUrl;
-      // feedback.textContent = state.rssStatus;
       feedback.textContent = state.errors;
-
       feedback.classList.remove('text-success');
       feedback.classList.add('text-danger');
       input.classList.add('is-invalid');
@@ -61,9 +53,6 @@ const view = (state) => {
       input.focus();
       break;
     case 'done':
-      // input.value = '';
-      // feedback.textContent = state.rssStatus;
-      // console.log(state.processState)
       feedback.textContent = state.rssStatus;
       feedsHeader.textContent = 'Фиды';
       postsHeader.textContent = 'Посты';
@@ -86,7 +75,6 @@ const view = (state) => {
         p.textContent = feed.feedDesc;
 
         feedUl.appendChild(feedLi);
-        // console.log(feed.feedTitle);
       });
 
       state.posts.forEach((post) => {
@@ -105,8 +93,6 @@ const view = (state) => {
         const viewed = state.uiState.viewedPost[post.id - 1].viewed
           ? 'fw-bold'
           : 'fw-normal';
-        // console.log(viewed, state.uiState.viewedPost[post.id - 1].viewed);
-        // console.log(viewed);
 
         a.classList.add(viewed);
         a.setAttribute('href', post.link);
@@ -145,13 +131,8 @@ const view = (state) => {
       break;
   }
   const viewedPost = (currentPostId) => {
-    // const isUniqPost = !state.uiState.viewedPost.find(({ id }) => id === currentPostId);
-    // console.log(isUniqPost);
     state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed;
-    // console.log(state);
     view(state);
   };
 };
-// const button = document.querySelector('[data-bs-target='#modal']');
-// console.log(button);
 export default view;

@@ -1,3 +1,4 @@
+/* eslint-disable semi */
 export default {
   ru: {
     translation: {
@@ -12,4 +13,4 @@ export default {
       },
     },
   },
-};
+}
