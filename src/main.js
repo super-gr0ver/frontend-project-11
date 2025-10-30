@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 /* eslint-disable arrow-parens */
 /* eslint-disable semi */
 import onChange from 'on-change'
@@ -201,10 +202,11 @@ form.addEventListener('submit', (e) => {
   const currentUrl = formData.get('url').trim()
 
   state.form.currentUrl = currentUrl
-  const isUrl = currentUrl => {
+  const isUrl = (currentUrl) => {
     try {
       return new URL(currentUrl)
-    } catch {
+    }
+    catch {
       state.errors = i18nextInstance.t('formErrors.url')
       watchedObj.processState = 'error'
     }
