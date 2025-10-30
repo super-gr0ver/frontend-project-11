@@ -35,11 +35,11 @@ const state = {
   },
 };
 
-const getRss = (url) => axios
-  .get(
+const getRss = (url) =>
+  axios.get(
     `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-      url,
-    )}`,
+      url
+    )}`
   );
 // .catch(() => {
 //   state.errors = 'error';
@@ -71,14 +71,14 @@ const isValidInterval = (unit, interval) => {
   // console.log(unit, interval);
   switch (unit) {
     case 'second':
-      return (interval <= 60) && (60 % interval === 0);
+      return interval <= 60 && 60 % interval === 0;
     case 'minute':
-      return (interval <= 60) && (60 % interval === 0);
+      return interval <= 60 && 60 % interval === 0;
     case 'day':
-      return (interval === 1);
+      return interval === 1;
     case 'month':
       // console.log(interval);
-      return (interval <= 12) && (12 % interval === 0);
+      return interval <= 12 && 12 % interval === 0;
     case 'year':
       return interval === 1;
     case null:
@@ -88,16 +88,21 @@ const isValidInterval = (unit, interval) => {
   }
 };
 
-const getSchema = (urls, unit, interval) => yup.object().shape({
-  currentUrl: yup
-    .string()
-    .url()
-    .trim()
-    .notOneOf(urls)
-    .required()
-    // .test('isRSS', i18nextInstance.t('rssStatus.error'), () => isRSS() === true)
-    .test('checkInterval', 'Не верный интервал обновления', () => isValidInterval(unit, interval) === true),
-});
+const getSchema = (urls, unit, interval) =>
+  yup.object().shape({
+    currentUrl: yup
+      .string()
+      .url()
+      .trim()
+      .notOneOf(urls)
+      .required()
+      // .test('isRSS', i18nextInstance.t('rssStatus.error'), () => isRSS() === true)
+      .test(
+        'checkInterval',
+        'Не верный интервал обновления',
+        () => isValidInterval(unit, interval) === true
+      ),
+  });
 
 const validate = (currentUrl, urls, unit, interval) => {
   const schema = getSchema(urls, unit, interval);
@@ -127,7 +132,9 @@ const parseRss = (data) => {
 
   // Проверка, если title нет в состоянии то добавляем. Исправить на проверку уникального ИД
   // Это чтобы каждый раз при проверке новых постов не добавлялись фиды, которые уже есть
-  const uniqFeedTitle = !state.feeds.find((feed) => feed.feedTitle === feedTitle);
+  const uniqFeedTitle = !state.feeds.find(
+    (feed) => feed.feedTitle === feedTitle
+  );
   // console.log(uniqFeedTitle);
   if (uniqFeedTitle) {
     state.feeds.unshift({ feedTitle, feedDesc });
@@ -165,14 +172,22 @@ input.addEventListener('input', () => {
 const updateRss = (url) => {
   getRss(url)
     .then((flow) => {
+      
+      if (state.processState === 'error') {
+        return
+      }
+
+      // watchedObj.processState = state.processState
       const { contents } = flow.data;
       const parse = new DOMParser();
       const doc = parse.parseFromString(contents, 'application/xml');
       const isRss = doc.querySelector('rss');
+      // console.log(!isRss);
 
       if (!isRss) {
+        // console.log(state.processState)
         watchedObj.processState = 'error';
-        // watchedObj.errors = '';
+        watchedObj.errors = '';
         watchedObj.errors = i18nextInstance.t('rssStatus.error');
         // watchedObj.rssStatus = i18nextInstance.t('rssStatus.error');
 
@@ -219,7 +234,9 @@ form.addEventListener('submit', (e) => {
   const currentUrl = formData.get('url').trim();
   state.form.currentUrl = currentUrl;
 
-  watchedObj.processState = 'processed';
+  console.log(state.processState);
+  // state.processState = 'done';
+  // watchedObj.processState = 'processed';
 
   const requestFreq = new URL(currentUrl);
   const unit = requestFreq.searchParams.get('unit');
@@ -229,26 +246,25 @@ form.addEventListener('submit', (e) => {
     ? Number(stringInterval.replace(',', '.'))
     : state.requestFreq.interval;
 
-  validate({ currentUrl }, state.urls, unit, interval)
-    .then((error) => {
-      if (Object.keys(error).length !== 0) {
-        state.errors = error.currentUrl?.message || 'err';
-        watchedObj.processState = 'error';
-        return;
-      }
-      const updateInterval = getInterval(unit, interval);
-      state.requestFreq.interval = updateInterval;
-      state.requestFreq.unit = unit;
+  validate({ currentUrl }, state.urls, unit, interval).then((error) => {
+    if (Object.keys(error).length !== 0) {
+      state.errors = error.currentUrl?.message || 'err';
+      watchedObj.processState = 'error';
+      return;
+    }
+    const updateInterval = getInterval(unit, interval);
+    state.requestFreq.interval = updateInterval;
+    state.requestFreq.unit = unit;
 
-      updateRss(currentUrl);
+    updateRss(currentUrl);
 
-      watchedObj.errors = '';
-      watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
-      watchedObj.processState = 'processed';
+    watchedObj.errors = '';
+    watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+    watchedObj.processState = 'processed';
 
-      // watchedObj.errors = '';
-      // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
-      // watchedObj.urls.push(currentUrl);
-      // watchedObj.processState = 'processed';
-    });
+    // watchedObj.errors = '';
+    // watchedObj.rssStatus = i18nextInstance.t('rssStatus.done');
+    // watchedObj.urls.push(currentUrl);
+    // watchedObj.processState = 'processed';
+  });
 });

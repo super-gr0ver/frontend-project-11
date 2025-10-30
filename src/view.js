@@ -5,21 +5,21 @@ const postsContainer = document.querySelector('.posts');
 const feedContainer = document.querySelector('.feeds');
 
 postsContainer.innerHTML = `
-<div class="card border-0">
-  <div class="card-body">
-    <h2 class="card-title h4"></h2>
+<div class='card border-0'>
+  <div class='card-body'>
+    <h2 class='card-title h4'></h2>
   </div>
-  <ul class="list-group border-0 rounded-0"></ul>
+  <ul class='list-group border-0 rounded-0'></ul>
 </div>
 `;
 const postsUl = postsContainer.querySelector('ul');
 
 feedContainer.innerHTML = `
-<div class="card border-0">
-  <div class="card-body">
-    <h2 class="card-title h4"></h2>
+<div class='card border-0'>
+  <div class='card-body'>
+    <h2 class='card-title h4'></h2>
   </div>
-  <ul class="list-group border-0 rounded-0"></ul>
+  <ul class='list-group border-0 rounded-0'></ul>
 </div>
 `;
 const feedUl = feedContainer.querySelector('ul');
@@ -35,13 +35,14 @@ const view = (state) => {
   // console.log(state.processState);
   switch (state.processState) {
     case 'filling':
-      feedback.textContent = '';
+      // feedback.textContent = '';
       input.classList.remove('is-invalid');
       addUrlBtn.disabled = false;
       break;
     case 'processed':
       input.value = '';
-      feedback.textContent = state.rssStatus;
+      feedback.textContent = '';
+      // feedback.textContent = state.rssStatus;
       feedback.classList.remove('text-danger');
       input.classList.remove('is-invalid');
       feedback.classList.add('text-success');
@@ -61,6 +62,9 @@ const view = (state) => {
       break;
     case 'done':
       // input.value = '';
+      // feedback.textContent = state.rssStatus;
+      // console.log(state.processState)
+      feedback.textContent = state.rssStatus;
       feedsHeader.textContent = 'Фиды';
       postsHeader.textContent = 'Посты';
 
@@ -94,7 +98,7 @@ const view = (state) => {
           'justify-content-between',
           'align-items-start',
           'border-0',
-          'border-end-0',
+          'border-end-0'
         );
         const a = document.createElement('a');
 
@@ -143,11 +147,12 @@ const view = (state) => {
   const viewedPost = (currentPostId) => {
     // const isUniqPost = !state.uiState.viewedPost.find(({ id }) => id === currentPostId);
     // console.log(isUniqPost);
-    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed;
+    state.uiState.viewedPost[currentPostId].viewed =
+      !state.uiState.viewedPost[currentPostId].viewed;
     // console.log(state);
     view(state);
   };
 };
-// const button = document.querySelector('[data-bs-target="#modal"]');
+// const button = document.querySelector('[data-bs-target='#modal']');
 // console.log(button);
 export default view;
