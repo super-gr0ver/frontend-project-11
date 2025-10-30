@@ -229,8 +229,22 @@ form.addEventListener('submit', (e) => {
 
   const formData = new FormData(e.target);
   const currentUrl = formData.get('url').trim();
+  // console.log(currentUrl);
+
   state.form.currentUrl = currentUrl;
-  const requestFreq = new URL(currentUrl);
+  const isUrl = (currentUrl) => {
+    try {
+      // new URL(currentUrl);
+      return new URL(currentUrl);
+    } catch {
+      state.errors = i18nextInstance.t('formErrors.url');
+      watchedObj.processState = 'error';
+    }
+  };
+  if (!isUrl(currentUrl)) {
+    return;
+  }
+  const requestFreq = isUrl(currentUrl);
   const unit = requestFreq.searchParams.get('unit');
 
   const stringInterval = requestFreq.searchParams.get('interval');
@@ -241,7 +255,6 @@ form.addEventListener('submit', (e) => {
   validate({ currentUrl }, state.urls, unit, interval).then((error) => {
     if (Object.keys(error).length !== 0) {
       state.errors = error.currentUrl?.message || 'err';
-      console.log(state.errors);
       watchedObj.processState = 'error';
       return;
     }
