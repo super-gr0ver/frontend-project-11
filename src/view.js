@@ -98,7 +98,7 @@ const view = (state) => {
           'justify-content-between',
           'align-items-start',
           'border-0',
-          'border-end-0'
+          'border-end-0',
         );
         const a = document.createElement('a');
 
@@ -147,8 +147,7 @@ const view = (state) => {
   const viewedPost = (currentPostId) => {
     // const isUniqPost = !state.uiState.viewedPost.find(({ id }) => id === currentPostId);
     // console.log(isUniqPost);
-    state.uiState.viewedPost[currentPostId].viewed =
-      !state.uiState.viewedPost[currentPostId].viewed;
+    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed;
     // console.log(state);
     view(state);
   };
