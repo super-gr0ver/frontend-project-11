@@ -91,7 +91,7 @@ const getSchema = (urls, unit, interval) => yup.object().shape({
     .notOneOf(urls)
     .test(
       'checkInterval',
-      'Не верный интервал обновления',
+      i18nextInstance.t('formErrors.update'),
       () => isValidInterval(unit, interval) === true,
     ),
 })
@@ -169,11 +169,6 @@ const updateRss = (url) => {
 
       setTimeout(updateRss, state.requestFreq.interval, url)
     })
-
-    // .catch(() => {
-    //   state.errors = i18nextInstance.t('rssStatus.networkError')
-    //   watchedObj.processState = 'error'
-    // })
 }
 
 const getInterval = (unit, interval) => {
@@ -223,7 +218,7 @@ form.addEventListener('submit', (e) => {
 
   validate({ currentUrl }, state.urls, unit, interval).then((error) => {
     if (Object.keys(error).length !== 0) {
-      state.errors = error.currentUrl?.message || 'err'
+      state.errors = error.currentUrl?.message
       watchedObj.processState = 'error'
       return
     }

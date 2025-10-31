@@ -10,6 +10,7 @@ export default {
       formErrors: {
         url: 'Ссылка должна быть валидным URL',
         exist: 'RSS уже существует',
+        update: 'Не верный интервал обновления'
       },
     },
   },
