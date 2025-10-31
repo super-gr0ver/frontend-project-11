@@ -54,9 +54,9 @@ const form = document.querySelector('.rss-form')
 const input = document.querySelector('.form-control')
 
 yup.setLocale({
-  string: {
-    url: () => i18nextInstance.t('formErrors.url'),
-  },
+  // string: {
+  //   url: () => i18nextInstance.t('formErrors.url'),
+  // },
   mixed: {
     notOneOf: () => i18nextInstance.t('formErrors.exist'),
   },
@@ -72,7 +72,6 @@ const isValidInterval = (unit, interval) => {
     case 'day':
       return interval === 1
     case 'month':
-      // console.log(interval)
       return interval <= 12 && 12 % interval === 0
     case 'year':
       return interval === 1
@@ -86,7 +85,7 @@ const isValidInterval = (unit, interval) => {
 const getSchema = (urls, unit, interval) => yup.object().shape({
   currentUrl: yup
     .string()
-    .url()
+    // .url()
     .trim()
     .required()
     .notOneOf(urls)
@@ -171,10 +170,10 @@ const updateRss = (url) => {
       setTimeout(updateRss, state.requestFreq.interval, url)
     })
 
-    .catch(() => {
-      state.errors = i18nextInstance.t('rssStatus.networkError')
-      watchedObj.processState = 'error'
-    })
+    // .catch(() => {
+    //   state.errors = i18nextInstance.t('rssStatus.networkError')
+    //   watchedObj.processState = 'error'
+    // })
 }
 
 const getInterval = (unit, interval) => {
