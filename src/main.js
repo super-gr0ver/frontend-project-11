@@ -5,8 +5,9 @@ import onChange from 'on-change'
 import * as yup from 'yup'
 import * as _ from 'lodash'
 import i18n from 'i18next'
-import axios from 'axios'
+// import axios from 'axios'
 import view from './view.js'
+import getUrl from './api/api.js'
 
 import resources from './locales/ru.js'
 import './style.css'
@@ -40,15 +41,20 @@ const run = async () => {
 }
 const watchedObj = onChange(state, () => view(state))
 
-const getRss = url => axios.get(
-  `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-    url,
-  )}`,
-)
-  .catch(() => {
-    state.errors = i18nextInstance.t('rssStatus.networkError')
-    watchedObj.processState = 'error'
-  })
+// const getRss = url => axios.get(
+//   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+//     url,
+//   )}`,
+// )
+//   .catch(() => {
+//     state.errors = i18nextInstance.t('rssStatus.networkError')
+//     watchedObj.processState = 'error'
+//   })
+const getRss = url => getUrl(url)
+// .catch(() => {
+//   state.errors = i18nextInstance.t('rssStatus.networkError')
+//   watchedObj.processState = 'error'
+// })
 
 const form = document.querySelector('.rss-form')
 const input = document.querySelector('.form-control')
