@@ -30,6 +30,11 @@ const feedsHeader = feedContainer.querySelector('h2')
 const postsHeader = postsContainer.querySelector('h2')
 
 const view = (state) => {
+  const viewedPost = (currentPostId) => {
+    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed
+    view(state)
+  }
+
   switch (state.processState) {
     case 'filling':
       input.classList.remove('is-invalid')
@@ -110,11 +115,14 @@ const view = (state) => {
         button.setAttribute('data-bs-toggle', 'modal')
         button.setAttribute('data-bs-target', '#modal')
         button.addEventListener('click', () => {
-          // const isViewed = state.uiState.viewedPost[post.id - 1].viewed
-
-          // if (isViewed) {
-          //   viewedPost(post.id - 1)
+          // const setViewedPostById = (currentPostId) => {
+          //   state.uiState.viewedPost[currentPostId].viewed = true
           // }
+          const isViewed = state.uiState.viewedPost[post.id - 1].viewed
+
+          if (isViewed) {
+            viewedPost(post.id - 1)
+          }
 
           const modalTitle = document.querySelector('.modal-header')
           const modalBody = document.querySelector('.modal-body')
@@ -130,9 +138,5 @@ const view = (state) => {
     default:
       break
   }
-  // const viewedPost = (currentPostId) => {
-  //   state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed
-  //   view(state)
-  // }
 }
 export default view
