@@ -83,7 +83,7 @@ const view = (state) => {
       })
 
       state.posts.forEach((post) => {
-        const button = document.createElement('button')
+        const previewButton = document.createElement('button')
         const postsLi = document.createElement('li')
         postsLi.classList.add(
           'list-group-item',
@@ -93,31 +93,28 @@ const view = (state) => {
           'border-0',
           'border-end-0',
         )
-        const a = document.createElement('a')
+        const postLink = document.createElement('a')
 
         const viewed = state.uiState.viewedPost[post.id - 1].viewed
           ? 'fw-bold'
           : 'fw-normal'
 
-        a.classList.add(viewed)
-        a.setAttribute('href', post.link)
-        a.setAttribute('data-id', post.id)
-        a.setAttribute('target', '_blank')
-        a.setAttribute('rel', 'noopener noreferrer')
-        postsLi.append(a)
-        a.textContent = post.title
+        postLink.classList.add(viewed)
+        postLink.setAttribute('href', post.link)
+        postLink.setAttribute('data-id', post.id)
+        postLink.setAttribute('target', '_blank')
+        postLink.setAttribute('rel', 'noopener noreferrer')
+        postsLi.append(postLink)
+        postLink.textContent = post.title
 
-        postsLi.append(button)
-        button.classList.add('btn', 'btn-outline-primary', 'btn-sm')
-        button.textContent = 'Просмотр'
-        button.setAttribute('type', 'button')
-        button.setAttribute('data-id', post.id)
-        button.setAttribute('data-bs-toggle', 'modal')
-        button.setAttribute('data-bs-target', '#modal')
-        button.addEventListener('click', () => {
-          // const setViewedPostById = (currentPostId) => {
-          //   state.uiState.viewedPost[currentPostId].viewed = true
-          // }
+        postsLi.append(previewButton)
+        previewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm')
+        previewButton.textContent = 'Просмотр'
+        previewButton.setAttribute('type', 'button')
+        previewButton.setAttribute('data-id', post.id)
+        previewButton.setAttribute('data-bs-toggle', 'modal')
+        previewButton.setAttribute('data-bs-target', '#modal')
+        previewButton.addEventListener('click', () => {
           const isViewed = state.uiState.viewedPost[post.id - 1].viewed
 
           if (isViewed) {
