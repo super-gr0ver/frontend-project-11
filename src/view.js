@@ -110,11 +110,11 @@ const view = (state) => {
         button.setAttribute('data-bs-toggle', 'modal')
         button.setAttribute('data-bs-target', '#modal')
         button.addEventListener('click', () => {
-          const isViewed = state.uiState.viewedPost[post.id - 1].viewed
+          // const isViewed = state.uiState.viewedPost[post.id - 1].viewed
 
-          if (isViewed) {
-            viewedPost(post.id - 1)
-          }
+          // if (isViewed) {
+          //   viewedPost(post.id - 1)
+          // }
 
           const modalTitle = document.querySelector('.modal-header')
           const modalBody = document.querySelector('.modal-body')
@@ -130,9 +130,9 @@ const view = (state) => {
     default:
       break
   }
-  const viewedPost = (currentPostId) => {
-    state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed
-    view(state)
-  }
+  // const viewedPost = (currentPostId) => {
+  //   state.uiState.viewedPost[currentPostId].viewed = !state.uiState.viewedPost[currentPostId].viewed
+  //   view(state)
+  // }
 }
 export default view
