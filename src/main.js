@@ -50,11 +50,12 @@ const watchedObj = onChange(state, () => view(state))
 //     state.errors = i18nextInstance.t('rssStatus.networkError')
 //     watchedObj.processState = 'error'
 //   })
+
 const getRss = url => getUrl(url)
-// .catch(() => {
-//   state.errors = i18nextInstance.t('rssStatus.networkError')
-//   watchedObj.processState = 'error'
-// })
+  .catch(() => {
+    state.errors = i18nextInstance.t('rssStatus.networkError')
+    watchedObj.processState = 'error'
+  })
 
 const form = document.querySelector('.rss-form')
 const input = document.querySelector('.form-control')
